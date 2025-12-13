@@ -12,6 +12,7 @@ import com.mete.braingame.data.Question
 sealed class Screen {
     data object Welcome : Screen()
     data object CategorySelection : Screen()
+    data object Learning : Screen()
     data object Game : Screen()
     data object Results : Screen()
     data object Progress : Screen()
@@ -40,6 +41,12 @@ class GameViewModel : ViewModel() {
     fun selectCategory(category: GameCategory) {
         selectedCategory = category
         currentQuestions = GameData.getQuestionsByCategory(category.id)
+        // First go to learning screen before game
+        currentScreen = Screen.Learning
+    }
+    
+    fun completeLearning() {
+        // After learning, go to game
         currentScreen = Screen.Game
     }
     

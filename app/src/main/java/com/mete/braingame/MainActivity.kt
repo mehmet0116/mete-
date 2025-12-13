@@ -14,15 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mete.braingame.data.GameData
+import com.mete.braingame.data.LearningData
 import com.mete.braingame.data.ProgressManager
 import com.mete.braingame.ui.GameViewModel
 import com.mete.braingame.ui.Screen
 import com.mete.braingame.ui.screens.CategorySelectionScreen
 import com.mete.braingame.ui.screens.GameScreen
+import com.mete.braingame.ui.screens.LearningScreen
 import com.mete.braingame.ui.screens.ProgressScreen
 import com.mete.braingame.ui.screens.ResultsScreen
 import com.mete.braingame.ui.screens.WelcomeScreen
 import com.mete.braingame.ui.theme.MeteBrainGameTheme
+import com.mete.braingame.util.SoundManager
 import com.mete.braingame.util.VoiceManager
 
 class MainActivity : ComponentActivity() {
@@ -47,11 +50,13 @@ fun GameApp() {
     val viewModel: GameViewModel = viewModel()
     val context = LocalContext.current
     val voiceManager = remember { VoiceManager(context) }
+    val soundManager = remember { SoundManager(context) }
     val progressManager = remember { ProgressManager(context) }
     
     DisposableEffect(Unit) {
         onDispose {
             voiceManager.shutdown()
+            soundManager.release()
         }
     }
     
@@ -77,6 +82,31 @@ fun GameApp() {
                 },
                 onProgressClick = {
                     viewModel.navigateToProgress()
+                }
+            )
+        }
+        
+        is Screen.Learning -> {
+            val learningItems = viewModel.selectedCategory?.let { category ->
+                LearningData.getLearningItems(category.id)
+            } ?: emptyList()
+            
+            LearningScreen(
+                categoryName = viewModel.selectedCategory?.name ?: "",
+                learningItems = learningItems,
+                childName = "Mete", // Configurable child name
+                onComplete = {
+                    voiceManager.speak("Çok iyi öğrendin Mete! Şimdi test zamanı!")
+                    viewModel.completeLearning()
+                },
+                onBack = {
+                    viewModel.backFromGame()
+                },
+                onItemClick = { item ->
+                    // Play sound for the item
+                    item.soundText?.let { soundText ->
+                        voiceManager.speak(soundText)
+                    }
                 }
             )
         }
@@ -115,6 +145,12 @@ fun GameApp() {
                 },
                 onWrongVoice = {
                     voiceManager.speak("Tekrar dene Mete, sen yapabilirsin!")
+                },
+                onItemClick = { item ->
+                    // Play sound when clicking on items (especially animals)
+                    soundManager.getAnimalSoundText(item)?.let { soundText ->
+                        voiceManager.speak(soundText)
+                    }
                 }
             )
         }

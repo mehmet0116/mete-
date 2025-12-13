@@ -155,7 +155,7 @@ fun StatisticsTab(userProgress: UserProgress) {
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     val accuracy = if (userProgress.totalQuestionsAnswered > 0) {
-                        (userProgress.totalCorrectAnswers * 100.0 / userProgress.totalQuestionsAnswered).toInt()
+                        kotlin.math.round(userProgress.totalCorrectAnswers * 100.0 / userProgress.totalQuestionsAnswered).toInt()
                     } else 0
                     StatRow("Başarı Oranı", "%$accuracy", "📊")
                 }
@@ -394,9 +394,9 @@ fun CategoryProgressCard(categoryName: String, progress: CategoryProgress) {
             
             Spacer(modifier = Modifier.height(8.dp))
             
-            // Progress bar
-            val progressPercent = if (progress.totalQuestions > 0) {
-                (progress.correctAnswers.toFloat() / progress.totalQuestions.toFloat())
+            // Progress bar - shows percentage of completed questions answered correctly
+            val progressPercent = if (progress.completedQuestions > 0) {
+                (progress.correctAnswers.toFloat() / progress.completedQuestions.toFloat())
             } else 0f
             
             LinearProgressIndicator(

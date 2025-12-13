@@ -4,6 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -216,7 +217,7 @@ fun GameScreen(
                 if (currentQuestion.items.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(24.dp))
                     // Use FlowRow to avoid horizontal scrolling
-                    androidx.compose.foundation.layout.FlowRow(
+                    FlowRow(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
@@ -232,7 +233,7 @@ fun GameScreen(
                                     .clickable(
                                         enabled = onItemClick != null,
                                         indication = null,
-                                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                                        interactionSource = remember { MutableInteractionSource() }
                                     ) {
                                         onItemClick?.invoke(item)
                                     }

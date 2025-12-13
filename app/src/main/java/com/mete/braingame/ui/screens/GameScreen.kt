@@ -3,12 +3,11 @@ package com.mete.braingame.ui.screens
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -38,7 +37,8 @@ fun GameScreen(
     onBack: () -> Unit,
     onQuestionVoice: (String) -> Unit,
     onCorrectVoice: () -> Unit,
-    onWrongVoice: () -> Unit
+    onWrongVoice: () -> Unit,
+    onItemClick: ((String) -> Unit)? = null
 ) {
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
     var score by remember { mutableIntStateOf(0) }
@@ -215,15 +215,28 @@ fun GameScreen(
                 // Pattern items (if applicable)
                 if (currentQuestion.items.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(24.dp))
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    // Use FlowRow to avoid horizontal scrolling
+                    androidx.compose.foundation.layout.FlowRow(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(currentQuestion.items) { item ->
+                        currentQuestion.items.forEach { item ->
                             Surface(
                                 shape = RoundedCornerShape(16.dp),
                                 color = Primary.copy(alpha = 0.1f),
-                                modifier = Modifier.size(64.dp)
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .bounceEffect(false)
+                                    .clickable(
+                                        enabled = onItemClick != null,
+                                        indication = null,
+                                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+                                    ) {
+                                        onItemClick?.invoke(item)
+                                    }
                             ) {
                                 Box(
                                     contentAlignment = Alignment.Center,

@@ -4,8 +4,10 @@ A comprehensive educational game designed specifically for children to develop c
 
 ## Features ✨
 
+- **📱 Android/PWA Support**: Install on Android devices as a native-like app (see [ANDROID.md](ANDROID.md))
 - **Personalized Experience**: Designed specifically for Mete with personalized greetings and feedback
 - **Voice Feedback**: Text-to-speech support in Turkish and English
+- **Offline Mode**: Works without internet after installation
 - **Multiple Categories**:
   - 🦁 Animals (Hayvanlar)
   - 🔢 Numbers (Sayılar)
@@ -63,6 +65,16 @@ The built files will be in the `dist` directory.
 npm run preview
 ```
 
+## 📱 Install on Android
+
+This app can be installed on Android devices as a Progressive Web App (PWA):
+
+1. Open the deployed app URL in Chrome on your Android device
+2. Tap the menu (⋮) and select **"Add to Home screen"**
+3. The app will install like a native Android app!
+
+For detailed instructions, see [ANDROID.md](ANDROID.md)
+
 ## Technology Stack 💻
 
 - **React 19** - Modern UI library
@@ -70,6 +82,7 @@ npm run preview
 - **Vite** - Fast build tool and dev server
 - **CSS3** - Custom animations and styling
 - **Web Speech API** - Text-to-speech functionality
+- **PWA** - Progressive Web App for Android installation
 
 ## How to Play 🎯
 

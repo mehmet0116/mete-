@@ -2,10 +2,7 @@
 const CACHE_NAME = 'mete-brain-game-v1';
 const urlsToCache = [
   '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192.svg',
-  '/icon-512.svg'
+  '/index.html'
 ];
 
 // Install event - cache resources
@@ -41,6 +38,9 @@ self.addEventListener('fetch', (event) => {
             caches.open(CACHE_NAME)
               .then((cache) => {
                 cache.put(event.request, responseToCache);
+              })
+              .catch((error) => {
+                console.log('Caching failed:', error);
               });
 
             return response;

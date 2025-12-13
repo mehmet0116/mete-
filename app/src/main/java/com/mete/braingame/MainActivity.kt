@@ -1,0 +1,122 @@
+package com.mete.braingame
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mete.braingame.data.GameData
+import com.mete.braingame.ui.GameViewModel
+import com.mete.braingame.ui.Screen
+import com.mete.braingame.ui.screens.CategorySelectionScreen
+import com.mete.braingame.ui.screens.GameScreen
+import com.mete.braingame.ui.screens.ResultsScreen
+import com.mete.braingame.ui.screens.WelcomeScreen
+import com.mete.braingame.ui.theme.MeteBrainGameTheme
+import com.mete.braingame.util.VoiceManager
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            MeteBrainGameTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    GameApp()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun GameApp() {
+    val viewModel: GameViewModel = viewModel()
+    val context = LocalContext.current
+    val voiceManager = remember { VoiceManager(context) }
+    
+    DisposableEffect(Unit) {
+        onDispose {
+            voiceManager.shutdown()
+        }
+    }
+    
+    when (viewModel.currentScreen) {
+        is Screen.Welcome -> {
+            WelcomeScreen(
+                onStart = {
+                    voiceManager.speak("Harika! Hadi başlayalım Mete!")
+                    viewModel.navigateToCategories()
+                },
+                onVoiceGreeting = {
+                    voiceManager.speak("Selam Mete! Hadi birlikte öğrenelim!")
+                }
+            )
+        }
+        
+        is Screen.CategorySelection -> {
+            CategorySelectionScreen(
+                categories = GameData.categories,
+                onCategorySelected = { category ->
+                    voiceManager.speak("${category.name} seçtik Mete! Harika seçim!")
+                    viewModel.selectCategory(category)
+                }
+            )
+        }
+        
+        is Screen.Game -> {
+            GameScreen(
+                questions = viewModel.currentQuestions,
+                categoryName = viewModel.selectedCategory?.name ?: "",
+                onFinish = { score, total ->
+                    viewModel.finishGame(score, total)
+                },
+                onBack = {
+                    viewModel.backFromGame()
+                },
+                onQuestionVoice = { text ->
+                    voiceManager.speak(text)
+                },
+                onCorrectVoice = {
+                    val praises = listOf(
+                        "Bravo Mete! Çok iyi!",
+                        "Aferin Mete! Harikasın!",
+                        "Süpersin Mete!",
+                        "Mükemmel Mete!",
+                        "Tebrikler Mete!"
+                    )
+                    voiceManager.speak(praises.random())
+                },
+                onWrongVoice = {
+                    voiceManager.speak("Tekrar dene Mete, sen yapabilirsin!")
+                }
+            )
+        }
+        
+        is Screen.Results -> {
+            ResultsScreen(
+                score = viewModel.finalScore,
+                total = viewModel.totalQuestions,
+                onPlayAgain = {
+                    voiceManager.speak("Harika! Tekrar oynayalım Mete!")
+                    viewModel.playAgain()
+                },
+                onBackToCategories = {
+                    voiceManager.speak("Başka bir kategori seçelim!")
+                    viewModel.backToCategories()
+                }
+            )
+        }
+    }
+}

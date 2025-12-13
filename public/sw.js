@@ -45,7 +45,11 @@ self.addEventListener('fetch', (event) => {
 
             return response;
           }
-        );
+        ).catch((error) => {
+          console.log('Fetch failed:', error);
+          // Return a fallback or cached response if available
+          return caches.match('/index.html');
+        });
       })
   );
 });

@@ -27,7 +27,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun CategorySelectionScreen(
     categories: List<GameCategory>,
-    onCategorySelected: (GameCategory) -> Unit
+    onCategorySelected: (GameCategory) -> Unit,
+    onProgressClick: () -> Unit = {}
 ) {
     var isVisible by remember { mutableStateOf(false) }
     
@@ -47,29 +48,62 @@ fun CategorySelectionScreen(
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn() + slideInVertically { -it / 2 }
+            // Header with Progress Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                Spacer(modifier = Modifier.width(48.dp)) // Balance the layout
+                
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn() + slideInVertically { -it / 2 }
                 ) {
-                    Text(
-                        text = "Mete, Bir Kategori Seç! 🎯",
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = TextPrimary,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Hangi konuda oynamak istersin?",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = TextSecondary,
-                        textAlign = TextAlign.Center
-                    )
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "Mete, Bir Kategori Seç! 🎯",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = TextPrimary,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Hangi konuda oynamak istersin?",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = TextSecondary,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                
+                // Progress button
+                IconButton(
+                    onClick = onProgressClick,
+                    modifier = Modifier.size(48.dp)
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = Secondary.copy(alpha = 0.2f)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "📊",
+                                fontSize = 24.sp
+                            )
+                        }
+                    }
                 }
             }
             

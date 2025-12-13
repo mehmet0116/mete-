@@ -25,6 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mete.braingame.data.Question
 import com.mete.braingame.ui.theme.*
+import com.mete.braingame.ui.effects.bounceEffect
+import com.mete.braingame.ui.effects.shakeEffect
+import com.mete.braingame.ui.effects.springEnterAnimation
 import kotlinx.coroutines.delay
 
 @Composable
@@ -284,11 +287,18 @@ fun AnswerButton(
         else -> TextPrimary
     }
     
+    // Trigger animations based on feedback
+    val shouldBounce = showFeedback && isSelected && isCorrect
+    val shouldShake = showFeedback && isSelected && !isCorrect
+    
     Card(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .height(80.dp),
+            .height(80.dp)
+            .bounceEffect(shouldBounce)
+            .shakeEffect(shouldShake)
+            .springEnterAnimation(0),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = backgroundColor),
         elevation = CardDefaults.cardElevation(

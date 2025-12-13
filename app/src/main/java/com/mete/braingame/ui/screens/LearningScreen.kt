@@ -45,7 +45,8 @@ fun LearningScreen(
     learningItems: List<LearningItem>,
     onComplete: () -> Unit,
     onBack: () -> Unit,
-    onItemClick: (LearningItem) -> Unit
+    onItemClick: (LearningItem) -> Unit,
+    childName: String = "Arkadaşım" // Default to generic greeting
 ) {
     var currentPage by remember { mutableIntStateOf(0) }
     var showEncouragement by remember { mutableStateOf(false) }
@@ -143,7 +144,7 @@ fun LearningScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Hadi birlikte öğrenelim Mete! 🌟",
+                            text = "Hadi birlikte öğrenelim $childName! 🌟",
                             style = MaterialTheme.typography.headlineSmall,
                             color = Primary,
                             fontWeight = FontWeight.Bold,
@@ -198,7 +199,7 @@ fun LearningScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            text = "Aferin Mete! Çok iyi dinliyorsun! 👏",
+                            text = "Aferin $childName! Çok iyi dinliyorsun! 👏",
                             modifier = Modifier.padding(16.dp),
                             style = MaterialTheme.typography.bodyLarge,
                             color = Secondary,

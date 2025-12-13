@@ -229,7 +229,6 @@ fun GameScreen(
                                 color = Primary.copy(alpha = 0.1f),
                                 modifier = Modifier
                                     .size(64.dp)
-                                    .bounceEffect(false)
                                     .clickable(
                                         enabled = onItemClick != null,
                                         indication = null,

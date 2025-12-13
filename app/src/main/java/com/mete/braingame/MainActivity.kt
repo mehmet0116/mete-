@@ -94,6 +94,7 @@ fun GameApp() {
             LearningScreen(
                 categoryName = viewModel.selectedCategory?.name ?: "",
                 learningItems = learningItems,
+                childName = "Mete", // Configurable child name
                 onComplete = {
                     voiceManager.speak("Çok iyi öğrendin Mete! Şimdi test zamanı!")
                     viewModel.completeLearning()

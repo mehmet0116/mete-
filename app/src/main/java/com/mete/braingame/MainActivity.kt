@@ -103,9 +103,21 @@ fun GameApp() {
                     viewModel.backFromGame()
                 },
                 onItemClick = { item ->
-                    // Play sound for the item
-                    item.soundText?.let { soundText ->
-                        voiceManager.speak(soundText)
+                    // Play real animal sound if available, otherwise use TTS
+                    if (viewModel.selectedCategory?.id == "animals") {
+                        if (soundManager.hasAnimalSound(item.emoji)) {
+                            soundManager.playAnimalSound(item.emoji)
+                        } else {
+                            // Fallback to TTS with just the animal name
+                            soundManager.getAnimalNameTr(item.emoji)?.let { name ->
+                                voiceManager.speak(name)
+                            }
+                        }
+                    } else {
+                        // For non-animals, use TTS with soundText
+                        item.soundText?.let { soundText ->
+                            voiceManager.speak(soundText)
+                        }
                     }
                 }
             )
@@ -147,9 +159,19 @@ fun GameApp() {
                     voiceManager.speak("Tekrar dene Mete, sen yapabilirsin!")
                 },
                 onItemClick = { item ->
-                    // Play sound when clicking on items (especially animals)
-                    soundManager.getAnimalSoundText(item)?.let { soundText ->
-                        voiceManager.speak(soundText)
+                    // Play real animal sound if available, otherwise use TTS
+                    if (soundManager.hasAnimalSound(item)) {
+                        soundManager.playAnimalSound(item)
+                    } else {
+                        // Fallback to TTS with just the animal name for animals category
+                        if (viewModel.selectedCategory?.id == "animals") {
+                            soundManager.getAnimalNameTr(item)?.let { name ->
+                                voiceManager.speak(name)
+                            }
+                        } else {
+                            // For other items, use their Turkish name
+                            voiceManager.speak(item)
+                        }
                     }
                 }
             )

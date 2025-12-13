@@ -155,7 +155,7 @@ fun StatisticsTab(userProgress: UserProgress) {
                     Spacer(modifier = Modifier.height(8.dp))
                     
                     val accuracy = if (userProgress.totalQuestionsAnswered > 0) {
-                        (userProgress.totalCorrectAnswers * 100) / userProgress.totalQuestionsAnswered
+                        (userProgress.totalCorrectAnswers * 100.0 / userProgress.totalQuestionsAnswered).toInt()
                     } else 0
                     StatRow("Başarı Oranı", "%$accuracy", "📊")
                 }

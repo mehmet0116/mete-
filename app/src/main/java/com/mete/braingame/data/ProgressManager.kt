@@ -157,7 +157,7 @@ class ProgressManager(context: Context) {
         val currentStreak = prefs.getInt(KEY_CURRENT_STREAK, 0)
         val longestStreak = prefs.getInt(KEY_LONGEST_STREAK, 0)
         
-        val newStreak = if (lastPlayed.isNullOrEmpty()) {
+        val newStreak = if (lastPlayed.isEmpty()) {
             1
         } else if (isYesterday(lastPlayed)) {
             currentStreak + 1
@@ -177,14 +177,22 @@ class ProgressManager(context: Context) {
     }
     
     /**
-     * Check if date string is yesterday
+     * Check if date string is yesterday (using Calendar for DST safety)
      */
     private fun isYesterday(dateStr: String): Boolean {
         return try {
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-            val date = sdf.parse(dateStr)
-            val yesterday = Date(System.currentTimeMillis() - 24 * 60 * 60 * 1000)
-            sdf.format(date) == sdf.format(yesterday)
+            val date = sdf.parse(dateStr) ?: return false
+            
+            val dateCalendar = java.util.Calendar.getInstance().apply {
+                time = date
+            }
+            val yesterday = java.util.Calendar.getInstance().apply {
+                add(java.util.Calendar.DAY_OF_MONTH, -1)
+            }
+            
+            dateCalendar.get(java.util.Calendar.YEAR) == yesterday.get(java.util.Calendar.YEAR) &&
+                    dateCalendar.get(java.util.Calendar.DAY_OF_YEAR) == yesterday.get(java.util.Calendar.DAY_OF_YEAR)
         } catch (e: Exception) {
             false
         }

@@ -56,11 +56,13 @@ fun CategorySelectionScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Spacer(modifier = Modifier.width(48.dp)) // Balance the layout
+                // Empty space for balance
+                Box(modifier = Modifier.weight(0.15f))
                 
                 AnimatedVisibility(
                     visible = isVisible,
-                    enter = fadeIn() + slideInVertically { -it / 2 }
+                    enter = fadeIn() + slideInVertically { -it / 2 },
+                    modifier = Modifier.weight(0.7f)
                 ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
@@ -86,7 +88,7 @@ fun CategorySelectionScreen(
                 // Progress button
                 IconButton(
                     onClick = onProgressClick,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.weight(0.15f)
                 ) {
                     Surface(
                         shape = RoundedCornerShape(12.dp),

@@ -153,7 +153,7 @@ class ProgressManager(context: Context) {
      */
     private fun updateStreak() {
         val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val lastPlayed = prefs.getString(KEY_LAST_PLAYED, "")
+        val lastPlayed: String = prefs.getString(KEY_LAST_PLAYED, "") ?: ""
         val currentStreak = prefs.getInt(KEY_CURRENT_STREAK, 0)
         val longestStreak = prefs.getInt(KEY_LONGEST_STREAK, 0)
         

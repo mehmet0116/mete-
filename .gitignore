@@ -1,24 +1,50 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Gradle files
+.gradle/
+build/
+*/build/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
 
-node_modules
-dist
-dist-ssr
-*.local
+# Local configuration file (sdk path, etc)
+local.properties
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Android Studio
+.idea/
+*.iml
+.navigation/
+captures/
+output.json
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder generated in Android Studio 2.2 and later
+.externalNativeBuild
+.cxx/
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# NDK
+obj/
+
+# Node.js / Web files (legacy)
+node_modules/
+dist/
+.npm
+.eslintcache
+
+# OS files
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Misc
+*.log
+*.orig
+*.rej
+*.swp
+*~
+.vscode/

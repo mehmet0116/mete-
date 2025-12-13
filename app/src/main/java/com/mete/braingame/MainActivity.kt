@@ -14,10 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mete.braingame.data.GameData
+import com.mete.braingame.data.ProgressManager
 import com.mete.braingame.ui.GameViewModel
 import com.mete.braingame.ui.Screen
 import com.mete.braingame.ui.screens.CategorySelectionScreen
 import com.mete.braingame.ui.screens.GameScreen
+import com.mete.braingame.ui.screens.ProgressScreen
 import com.mete.braingame.ui.screens.ResultsScreen
 import com.mete.braingame.ui.screens.WelcomeScreen
 import com.mete.braingame.ui.theme.MeteBrainGameTheme
@@ -45,6 +47,7 @@ fun GameApp() {
     val viewModel: GameViewModel = viewModel()
     val context = LocalContext.current
     val voiceManager = remember { VoiceManager(context) }
+    val progressManager = remember { ProgressManager(context) }
     
     DisposableEffect(Unit) {
         onDispose {
@@ -71,6 +74,9 @@ fun GameApp() {
                 onCategorySelected = { category ->
                     voiceManager.speak("${category.name} seçtik Mete! Harika seçim!")
                     viewModel.selectCategory(category)
+                },
+                onProgressClick = {
+                    viewModel.navigateToProgress()
                 }
             )
         }
@@ -80,6 +86,15 @@ fun GameApp() {
                 questions = viewModel.currentQuestions,
                 categoryName = viewModel.selectedCategory?.name ?: "",
                 onFinish = { score, total ->
+                    // Save progress
+                    viewModel.selectedCategory?.let { category ->
+                        progressManager.updateProgress(
+                            categoryId = category.id,
+                            questionsAnswered = total,
+                            correctAnswers = score,
+                            newMasteredWords = emptySet() // Will be populated in advanced version
+                        )
+                    }
                     viewModel.finishGame(score, total)
                 },
                 onBack = {
@@ -115,6 +130,19 @@ fun GameApp() {
                 onBackToCategories = {
                     voiceManager.speak("Başka bir kategori seçelim!")
                     viewModel.backToCategories()
+                }
+            )
+        }
+        
+        is Screen.Progress -> {
+            val userProgress = progressManager.getUserProgress()
+            val categoryNames = GameData.categories.associate { it.id to it.name }
+            
+            ProgressScreen(
+                userProgress = userProgress,
+                categoryNames = categoryNames,
+                onBack = {
+                    viewModel.backFromProgress()
                 }
             )
         }

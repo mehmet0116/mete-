@@ -47,3 +47,50 @@ data class GameState(
     val questionsAnswered: Int = 0,
     val correctAnswers: Int = 0
 )
+
+/**
+ * Difficulty level for questions
+ */
+enum class DifficultyLevel {
+    EASY,
+    MEDIUM,
+    HARD
+}
+
+/**
+ * Progress tracking for a category
+ */
+data class CategoryProgress(
+    val categoryId: String,
+    val totalQuestions: Int = 0,
+    val completedQuestions: Int = 0,
+    val correctAnswers: Int = 0,
+    val masteredWords: Set<String> = emptySet(),
+    val lastPlayedTime: Long = 0L
+)
+
+/**
+ * User achievement
+ */
+data class Achievement(
+    val id: String,
+    val title: String,
+    val description: String,
+    val icon: String,
+    val isUnlocked: Boolean = false,
+    val unlockedDate: Long? = null
+)
+
+/**
+ * Overall user progress
+ */
+data class UserProgress(
+    val totalScore: Int = 0,
+    val totalQuestionsAnswered: Int = 0,
+    val totalCorrectAnswers: Int = 0,
+    val categoryProgress: Map<String, CategoryProgress> = emptyMap(),
+    val achievements: List<Achievement> = emptyList(),
+    val currentStreak: Int = 0,
+    val longestStreak: Int = 0,
+    val lastPlayedDate: String = ""
+)

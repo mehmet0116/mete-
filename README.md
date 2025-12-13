@@ -1,27 +1,31 @@
 # Mete's Brain Game - Educational Android App 🧠🎮
 
-A comprehensive educational Android game designed specifically for children to develop cognitive skills while learning English and having fun. This native Android application features pattern recognition, counting, shapes, colors, letters, and more with beautiful Material Design 3 UI and Jetpack Compose!
+Türk okul öncesi çocukları için özel olarak tasarlanmış kapsamlı bir eğitim oyunu. Bu yerel Android uygulaması bilişsel becerileri geliştirirken, Türkçe öğretim metodolojisi ile eğlenceli bir deneyim sunar. Material Design 3 UI ve Jetpack Compose ile güzel bir arayüze sahiptir!
 
-## Features ✨
+## Özellikler ✨
 
-- **📱 Native Android App**: Built with Kotlin and Jetpack Compose for superior performance
-- **Personalized Experience**: Designed specifically for Mete with personalized greetings and feedback
-- **Voice Feedback**: Text-to-speech support in Turkish and English
-- **Multiple Categories**:
-  - 🦁 Animals (Hayvanlar)
-  - 🔢 Numbers (Sayılar)
-  - ⭐ Shapes (Şekiller)
-  - 🎨 Colors (Renkler)
-  - 📝 Letters (Harfler)
-  - 🍎 Fruits (Meyveler)
-- **Various Game Types**:
-  - Pattern Recognition
-  - Counting Games
-  - Quiz Questions
-  - English Vocabulary Learning
-- **Beautiful UI**: Material Design 3 with smooth animations and transitions
-- **Progress Tracking**: Score system with encouraging feedback
-- **Optimized for Phones**: Portrait orientation with child-friendly touch targets
+- **📱 Yerel Android Uygulaması**: Kotlin ve Jetpack Compose ile üstün performans
+- **Kişiselleştirilmiş Deneyim**: Kişiye özel selamlamalar ve geri bildirimler
+- **Sesli Geri Bildirim**: Türkçe ses desteği ve gerçek hayvan sesleri
+- **Zengin Kategoriler**:
+  - 🦁 Hayvanlar (25 hayvan - gerçek seslerle!)
+  - 🔢 Sayılar (16 sayı - 1'den 20'ye)
+  - ⭐ Şekiller (10 şekil)
+  - 🎨 Renkler (12 renk)
+  - 📝 Harfler (16 harf)
+  - 🍎 Meyveler (14 meyve)
+  - 🥕 Sebzeler (12 sebze)
+  - 👁️ Vücut Bölümleri (12 organ)
+  - 🏃 Hareketler (12 hareket)
+  - 📅 Zaman (11 kavram)
+- **Eğitim Metodolojisi**:
+  - Önce Öğren → Sonra Test
+  - Pozitif pekiştirme
+  - Yaş grubuna uygun içerik
+  - Gerçek hayvan sesleri (TTS değil!)
+- **Güzel Arayüz**: Material Design 3 ile düzgün animasyonlar
+- **İlerleme Takibi**: Teşvik edici geri bildirimlerle puan sistemi
+- **Telefonlar İçin Optimize**: Çocuklar için uygun dokunmatik hedefler
 
 ## Technology Stack 💻
 
@@ -29,7 +33,8 @@ A comprehensive educational Android game designed specifically for children to d
 - **Jetpack Compose** - Modern Android UI toolkit
 - **Material Design 3** - Latest design system from Google
 - **Android SDK** - Native Android development
-- **Text-to-Speech API** - Voice feedback in Turkish and English
+- **Text-to-Speech API** - Voice feedback in Turkish
+- **SoundPool API** - Real animal sound playback
 - **ViewModel** - MVVM architecture for state management
 - **Compose Navigation** - Screen navigation
 

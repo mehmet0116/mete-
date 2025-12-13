@@ -205,17 +205,9 @@ fun CategoryCard(
                     // Turkish name
                     Text(
                         text = category.name,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.headlineSmall,
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                    
-                    // English name
-                    Text(
-                        text = category.nameEn,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.9f),
                         textAlign = TextAlign.Center
                     )
                 }

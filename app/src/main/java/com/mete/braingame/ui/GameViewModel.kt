@@ -14,6 +14,7 @@ sealed class Screen {
     data object CategorySelection : Screen()
     data object Game : Screen()
     data object Results : Screen()
+    data object Progress : Screen()
 }
 
 class GameViewModel : ViewModel() {
@@ -64,6 +65,14 @@ class GameViewModel : ViewModel() {
     fun backFromGame() {
         selectedCategory = null
         currentQuestions = emptyList()
+        currentScreen = Screen.CategorySelection
+    }
+    
+    fun navigateToProgress() {
+        currentScreen = Screen.Progress
+    }
+    
+    fun backFromProgress() {
         currentScreen = Screen.CategorySelection
     }
 }

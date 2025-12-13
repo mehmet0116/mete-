@@ -78,6 +78,9 @@ dependencies {
     // Animation
     implementation("androidx.compose.animation:animation:1.7.6")
     
+    // JSON serialization
+    implementation("com.google.code.gson:gson:2.10.1")
+    
     // Testing
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

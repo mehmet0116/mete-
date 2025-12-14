@@ -71,7 +71,7 @@ object GameData {
         ),
         Category(
             id = 8,
-            name = "body_parts",
+            name = "bodyparts",
             displayName = "Vücut Bölümleri",
             color = BodyPartsColor,
             icon = "👁️",

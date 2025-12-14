@@ -325,17 +325,9 @@ fun LearningItemCard(
             // Turkish name
             Text(
                 text = item.nameTr,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 color = TextPrimary,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
-            )
-            
-            // English name
-            Text(
-                text = item.nameEn,
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondary,
                 textAlign = TextAlign.Center
             )
         }

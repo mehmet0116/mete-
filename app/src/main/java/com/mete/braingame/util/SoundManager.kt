@@ -23,49 +23,114 @@ class SoundManager(private val context: Context) {
             .setAudioAttributes(audioAttributes)
             .build()
         
-        // Load animal sounds programmatically using TTS for now
-        // In a full implementation, you would load actual sound files from res/raw
+        loadAnimalSounds()
+    }
+    
+    /**
+     * Load animal sound files from res/raw
+     */
+    private fun loadAnimalSounds() {
+        soundPool?.let { pool ->
+            ANIMAL_SOUND_FILES.forEach { (emoji, resourceName) ->
+                try {
+                    val resourceId = context.resources.getIdentifier(
+                        resourceName, 
+                        "raw", 
+                        context.packageName
+                    )
+                    if (resourceId != 0) {
+                        val soundId = pool.load(context, resourceId, 1)
+                        soundMap[emoji] = soundId
+                    }
+                } catch (e: Exception) {
+                    // Silently fail if sound file not found
+                    e.printStackTrace()
+                }
+            }
+        }
     }
     
     companion object {
         /**
-         * Animal sound mapping - centralized to avoid duplication
+         * Animal sound file mapping - maps emoji to raw resource name
          */
-        private val ANIMAL_SOUNDS = mapOf(
-            "🦁" to "Aslan böyle der: Haauuuvvv",
-            "🐘" to "Fil böyle der: Töööörrrr",
-            "🐶" to "Köpek böyle der: Hav hav",
-            "🐱" to "Kedi böyle der: Miyav miyav",
-            "🐭" to "Fare böyle der: Cik cik",
-            "🐰" to "Tavşan hıf hıf der",
-            "🐦" to "Kuş böyle der: Cik cik cirrrik",
-            "🐟" to "Balık suda yüzer",
-            "🦋" to "Kelebek uçuyor",
-            "🐮" to "İnek böyle der: Möööö",
-            "🐷" to "Domuz böyle der: Oink oink",
-            "🐸" to "Kurbağa böyle der: Vrak vrak",
-            "🐔" to "Tavuk böyle der: Gıt gıt gıdaak",
-            "🦆" to "Ördek böyle der: Vak vak",
-            "🐴" to "At böyle der: İhiii",
-            "🐑" to "Koyun böyle der: Meee",
-            "🦉" to "Baykuş böyle der: Huu huu",
-            "🦅" to "Kartal böyle der: Çirrrt",
-            "🐝" to "Arı böyle der: Vızz vızz",
-            "🐵" to "Maymun böyle der: Ooo ooo aa aa",
-            "🐻" to "Ayı böyle der: Hırrr",
-            "🦊" to "Tilki böyle der: Yaff yaff",
-            "🦒" to "Zürafa sessiz bir hayvandır",
-            "🐯" to "Kaplan böyle der: Hırrr",
-            "🦓" to "Zebra böyle der: İhiii",
-            "🐧" to "Penguen böyle der: Öak öak"
+        private val ANIMAL_SOUND_FILES = mapOf(
+            "🦁" to "sound_lion",
+            "🐘" to "sound_elephant",
+            "🐶" to "sound_dog",
+            "🐱" to "sound_cat",
+            "🐭" to "sound_mouse",
+            "🐰" to "sound_rabbit",
+            "🐦" to "sound_bird",
+            "🐵" to "sound_monkey",
+            "🐻" to "sound_bear",
+            "🐴" to "sound_horse",
+            "🐮" to "sound_cow",
+            "🦒" to "sound_giraffe",
+            "🐯" to "sound_tiger",
+            "🦓" to "sound_zebra",
+            "🐧" to "sound_penguin",
+            "🦆" to "sound_duck",
+            "🦉" to "sound_owl",
+            "🦅" to "sound_eagle"
+        )
+        
+        /**
+         * Animal name mapping for TTS fallback - only Turkish names
+         */
+        private val ANIMAL_NAMES_TR = mapOf(
+            "🦁" to "Aslan",
+            "🐘" to "Fil",
+            "🐶" to "Köpek",
+            "🐱" to "Kedi",
+            "🐭" to "Fare",
+            "🐰" to "Tavşan",
+            "🐦" to "Kuş",
+            "🐟" to "Balık",
+            "🦋" to "Kelebek",
+            "🐮" to "İnek",
+            "🐷" to "Domuz",
+            "🐸" to "Kurbağa",
+            "🐔" to "Tavuk",
+            "🦆" to "Ördek",
+            "🐴" to "At",
+            "🐑" to "Koyun",
+            "🦉" to "Baykuş",
+            "🦅" to "Kartal",
+            "🐝" to "Arı",
+            "🐵" to "Maymun",
+            "🐻" to "Ayı",
+            "🦊" to "Tilki",
+            "🦒" to "Zürafa",
+            "🐯" to "Kaplan",
+            "🦓" to "Zebra",
+            "🐧" to "Penguen"
         )
     }
     
     /**
-     * Get sound description for TTS
+     * Play animal sound
      */
-    fun getAnimalSoundText(animalEmoji: String): String? {
-        return ANIMAL_SOUNDS[animalEmoji]
+    fun playAnimalSound(animalEmoji: String) {
+        if (!isEnabled) return
+        
+        soundMap[animalEmoji]?.let { soundId ->
+            soundPool?.play(soundId, 1.0f, 1.0f, 1, 0, 1.0f)
+        }
+    }
+    
+    /**
+     * Check if animal has a sound file
+     */
+    fun hasAnimalSound(animalEmoji: String): Boolean {
+        return soundMap.containsKey(animalEmoji)
+    }
+    
+    /**
+     * Get animal name in Turkish for TTS fallback
+     */
+    fun getAnimalNameTr(animalEmoji: String): String? {
+        return ANIMAL_NAMES_TR[animalEmoji]
     }
     
     fun toggle() {

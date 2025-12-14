@@ -5,30 +5,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 
 private val DarkColorScheme = darkColorScheme(
-    primary = PrimaryColor,
-    secondary = SecondaryColor,
-    tertiary = HighlightColor,
-    background = Color(0xFF121212),
-    surface = Color(0xFF1E1E1E),
-    onPrimary = OnPrimaryColor,
-    onSecondary = OnSecondaryColor,
-    onBackground = Color.White,
-    onSurface = Color.White
+    primary = Purple80,
+    secondary = PurpleGrey80,
+    tertiary = Pink80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = PrimaryColor,
-    secondary = SecondaryColor,
-    tertiary = HighlightColor,
-    background = BackgroundColor,
-    surface = SurfaceColor,
-    onPrimary = OnPrimaryColor,
-    onSecondary = OnSecondaryColor,
-    onBackground = OnBackgroundColor,
-    onSurface = OnSurfaceColor
+    primary = Purple40,
+    secondary = PurpleGrey40,
+    tertiary = Pink40
 )
 
 @Composable
@@ -36,12 +23,8 @@ fun MeteBrainGameTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
-    }
-
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

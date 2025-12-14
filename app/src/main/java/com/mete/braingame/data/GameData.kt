@@ -1,164 +1,121 @@
 package com.mete.braingame.data
 
-/**
- * Oyun verileri - Tüm kategoriler ve sorular
- */
 object GameData {
-    
     val categories = listOf(
         Category(
-            id = 1,
+            id = "animals",
             name = "Hayvanlar",
-            iconRes = "🦁",
-            description = "25 hayvan - gerçek seslerle!",
+            iconResId = "🦁",
             color = 0xFF4CAF50,
-            totalQuestions = 10
+            description = "25 hayvan ve gerçek sesleri"
         ),
         Category(
-            id = 2,
+            id = "numbers",
             name = "Sayılar",
-            iconRes = "🔢",
-            description = "16 sayı - 1'den 20'ye",
+            iconResId = "🔢",
             color = 0xFF2196F3,
-            totalQuestions = 10
+            description = "1'den 20'ye kadar sayılar"
         ),
         Category(
-            id = 3,
+            id = "shapes",
             name = "Şekiller",
-            iconRes = "⭐",
-            description = "10 şekil",
+            iconResId = "⭐",
             color = 0xFFFF9800,
-            totalQuestions = 8
+            description = "10 farklı şekil"
         ),
         Category(
-            id = 4,
+            id = "colors",
             name = "Renkler",
-            iconRes = "🎨",
-            description = "12 renk",
+            iconResId = "🎨",
             color = 0xFFE91E63,
-            totalQuestions = 8
+            description = "12 farklı renk"
         ),
         Category(
-            id = 5,
+            id = "fruits",
             name = "Meyveler",
-            iconRes = "🍎",
-            description = "14 meyve",
+            iconResId = "🍎",
             color = 0xFF9C27B0,
-            totalQuestions = 8
+            description = "14 farklı meyve"
         ),
         Category(
-            id = 6,
+            id = "vegetables",
             name = "Sebzeler",
-            iconRes = "🥕",
-            description = "12 sebze",
+            iconResId = "🥕",
             color = 0xFF009688,
-            totalQuestions = 8
-        ),
-        Category(
-            id = 7,
-            name = "Vücut Bölümleri",
-            iconRes = "👁️",
-            description = "12 organ",
-            color = 0xFF795548,
-            totalQuestions = 8
-        ),
-        Category(
-            id = 8,
-            name = "Hareketler",
-            iconRes = "🏃",
-            description = "12 hareket",
-            color = 0xFF607D8B,
-            totalQuestions = 8
-        ),
-        Category(
-            id = 9,
-            name = "Zaman",
-            iconRes = "📅",
-            description = "11 kavram",
-            color = 0xFF3F51B5,
-            totalQuestions = 8
-        ),
-        Category(
-            id = 10,
-            name = "Harfler",
-            iconRes = "📝",
-            description = "16 harf",
-            color = 0xFF00BCD4,
-            totalQuestions = 10
+            description = "12 farklı sebze"
         )
     )
     
-    // Örnek sorular - Hayvanlar kategorisi için
-    val animalQuestions = listOf(
-        Question(
-            id = 1,
-            categoryId = 1,
-            text = "Hangi hayvan 'miyav' sesi çıkarır?",
-            imageRes = "cat_image",
-            soundRes = "cat_sound",
-            options = listOf("Köpek", "Kedi", "Kuş", "İnek"),
-            correctAnswer = 1,
-            explanation = "Kediler 'miyav' sesi çıkarır!"
-        ),
-        Question(
-            id = 2,
-            categoryId = 1,
-            text = "Hangi hayvan havlar?",
-            imageRes = "dog_image",
-            soundRes = "dog_sound",
-            options = listOf("Kedi", "Köpek", "Tavuk", "Ördek"),
-            correctAnswer = 1,
-            explanation = "Köpekler havlar!"
-        ),
-        Question(
-            id = 3,
-            categoryId = 1,
-            text = "Hangi hayvan öter?",
-            imageRes = "bird_image",
-            soundRes = "bird_sound",
-            options = listOf("Kedi", "Köpek", "Kuş", "Balık"),
-            correctAnswer = 2,
-            explanation = "Kuşlar öter!"
-        )
-    )
-    
-    // Sayılar kategorisi için örnek sorular
-    val numberQuestions = listOf(
-        Question(
-            id = 101,
-            categoryId = 2,
-            text = "Kaç tane elma var?",
-            imageRes = "three_apples",
-            options = listOf("2", "3", "4", "5"),
-            correctAnswer = 1,
-            explanation = "Resimde 3 elma var!"
-        ),
-        Question(
-            id = 102,
-            categoryId = 2,
-            text = "1'den sonra hangi sayı gelir?",
-            options = listOf("0", "2", "3", "4"),
-            correctAnswer = 1,
-            explanation = "1'den sonra 2 gelir!"
-        )
-    )
-    
-    /**
-     * Kategori ID'sine göre soruları getir
-     */
-    fun getQuestionsForCategory(categoryId: Int): List<Question> {
+    fun getQuestionsForCategory(categoryId: String): List<Question> {
         return when (categoryId) {
-            1 -> animalQuestions
-            2 -> numberQuestions
-            else -> animalQuestions // Varsayılan olarak hayvan soruları
+            "animals" -> animalQuestions
+            "numbers" -> numberQuestions
+            "shapes" -> shapeQuestions
+            "colors" -> colorQuestions
+            "fruits" -> fruitQuestions
+            "vegetables" -> vegetableQuestions
+            else -> emptyList()
         }
     }
     
-    /**
-     * Karıştırılmış sorular getir
-     */
-    fun getShuffledQuestions(categoryId: Int, count: Int = 5): List<Question> {
-        val allQuestions = getQuestionsForCategory(categoryId)
-        return allQuestions.shuffled().take(count)
-    }
+    private val animalQuestions = listOf(
+        Question(
+            id = "animal_1",
+            categoryId = "animals",
+            text = "Bu hangi hayvan?",
+            options = listOf("Aslan", "Kaplan", "Fil", "Zürafa"),
+            correctAnswer = "Aslan"
+        )
+        // Diğer sorular buraya eklenebilir
+    )
+    
+    private val numberQuestions = listOf(
+        Question(
+            id = "number_1",
+            categoryId = "numbers",
+            text = "Kaç tane elma var?",
+            options = listOf("1", "2", "3", "4"),
+            correctAnswer = "3"
+        )
+    )
+    
+    private val shapeQuestions = listOf(
+        Question(
+            id = "shape_1",
+            categoryId = "shapes",
+            text = "Bu hangi şekil?",
+            options = listOf("Kare", "Daire", "Üçgen", "Dikdörtgen"),
+            correctAnswer = "Daire"
+        )
+    )
+    
+    private val colorQuestions = listOf(
+        Question(
+            id = "color_1",
+            categoryId = "colors",
+            text = "Bu hangi renk?",
+            options = listOf("Kırmızı", "Mavi", "Yeşil", "Sarı"),
+            correctAnswer = "Kırmızı"
+        )
+    )
+    
+    private val fruitQuestions = listOf(
+        Question(
+            id = "fruit_1",
+            categoryId = "fruits",
+            text = "Bu hangi meyve?",
+            options = listOf("Elma", "Muz", "Portakal", "Çilek"),
+            correctAnswer = "Elma"
+        )
+    )
+    
+    private val vegetableQuestions = listOf(
+        Question(
+            id = "vegetable_1",
+            categoryId = "vegetables",
+            text = "Bu hangi sebze?",
+            options = listOf("Havuç", "Domates", "Salatalık", "Patates"),
+            correctAnswer = "Havuç"
+        )
+    )
 }

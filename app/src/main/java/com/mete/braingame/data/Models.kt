@@ -1,26 +1,32 @@
 package com.mete.braingame.data
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class Category(
-    val id: String,
+    val id: Int,
     val name: String,
-    val iconResId: String,
-    val color: Long,
-    val description: String
+    val icon: String,
+    val description: String,
+    val color: Long
 )
 
+@Immutable
 data class Question(
-    val id: String,
-    val categoryId: String,
+    val id: Int,
+    val categoryId: Int,
     val text: String,
-    val imageResId: String? = null,
+    val imageRes: String? = null,
     val options: List<String>,
-    val correctAnswer: String,
-    val audioResId: String? = null
+    val correctAnswer: Int,
+    val audioRes: String? = null
 )
 
 data class GameState(
     val currentQuestionIndex: Int = 0,
-    val totalQuestions: Int = 0,
     val score: Int = 0,
-    val questions: List<Question> = emptyList()
+    val totalQuestions: Int = 10,
+    val isGameOver: Boolean = false,
+    val selectedAnswer: Int? = null,
+    val isAnswerCorrect: Boolean? = null
 )

@@ -13,9 +13,26 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = PrimaryColor,
+    onPrimary = OnPrimaryColor,
+    primaryContainer = PrimaryContainer,
+    onPrimaryContainer = OnPrimaryContainer,
+    secondary = SecondaryColor,
+    onSecondary = OnSecondaryColor,
+    secondaryContainer = SecondaryContainer,
+    onSecondaryContainer = OnSecondaryContainer,
+    tertiary = TertiaryColor,
+    onTertiary = OnTertiaryColor,
+    tertiaryContainer = TertiaryContainer,
+    onTertiaryContainer = OnTertiaryContainer,
+    background = BackgroundColor,
+    onBackground = OnBackgroundColor,
+    surface = SurfaceColor,
+    onSurface = OnSurfaceColor,
+    error = ErrorColor,
+    onError = OnErrorColor,
+    errorContainer = ErrorContainer,
+    onErrorContainer = OnErrorContainer
 )
 
 @Composable
@@ -23,8 +40,12 @@ fun MeteBrainGameTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
-    
+    val colorScheme = if (darkTheme) {
+        DarkColorScheme
+    } else {
+        LightColorScheme
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,

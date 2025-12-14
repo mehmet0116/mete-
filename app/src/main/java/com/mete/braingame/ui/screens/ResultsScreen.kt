@@ -36,7 +36,7 @@ fun ResultsScreen(
     
     // Speak the results
     LaunchedEffect(Unit) {
-        voiceManager.speak("Oyun bitti! $correctAnswers doğru $totalQuestions soru. $feedbackMessage")
+        voiceManager.speak("Oyun bitti! $totalQuestions sorudan $correctAnswers tanesini doğru cevapladın. $feedbackMessage")
     }
 
     Column(

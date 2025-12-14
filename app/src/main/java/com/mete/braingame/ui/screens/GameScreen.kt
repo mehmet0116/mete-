@@ -88,7 +88,8 @@ fun GameScreen(
                                     val isCorrect = index == question.correctAnswer
                                     viewModel.selectAnswer(index)
                                     
-                                    // Voice feedback for answer
+                                    // Stop question reading and provide answer feedback
+                                    voiceManager.stop()
                                     if (isCorrect) {
                                         voiceManager.speak("Doğru! Aferin Mete!")
                                     } else {

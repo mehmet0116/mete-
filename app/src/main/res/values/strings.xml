@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">METE</string>
+    <string name="app_name">Mete\'nin Beyin Oyunu</string>
     
     <!-- Welcome Screen -->
-    <string name="welcome_title">METE HOŞGELDİN!</string>
+    <string name="welcome_title">Mete\'ye Hoşgeldin!</string>
     <string name="welcome_subtitle">Hadi birlikte öğrenelim ve eğlenelim!</string>
     <string name="start_button">OYUNA BAŞLA</string>
     

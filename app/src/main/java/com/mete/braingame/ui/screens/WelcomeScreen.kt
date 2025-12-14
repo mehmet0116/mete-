@@ -25,66 +25,46 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mete.braingame.R
-import kotlinx.coroutines.delay
+import com.mete.braingame.ui.theme.PrimaryColor
+import com.mete.braingame.ui.theme.SecondaryColor
+import com.mete.braingame.util.VoiceManager
 
 @Composable
 fun WelcomeScreen(
-    onStartClick: () -> Unit = {},
-    onVoiceWelcome: () -> Unit = {}
+    navController: NavController,
+    voiceManager: VoiceManager
 ) {
-    // Uygulama açıldığında sesli hoşgeldin mesajı
+    // Hoşgeldin sesini çal
     LaunchedEffect(Unit) {
-        delay(500) // Kısa bir gecikme
-        onVoiceWelcome()
+        voiceManager.speak("Mete hoşgeldin! Hadi oyun oynayalım!")
     }
-
+    
+    // Lottie animasyonu
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(R.raw.welcome_animation)
+    )
+    
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF6A11CB),
-                        Color(0xFF2575FC)
+                        Color(0xFFFFF9F9),
+                        Color(0xFFFFF0F5)
                     )
                 )
             )
     ) {
-        // Arka plan dekorasyonları
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
-            // Sol üst dekorasyon
-            Box(
-                modifier = Modifier
-                    .size(100.dp)
-                    .align(Alignment.TopStart)
-                    .background(
-                        color = Color.White.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(24.dp)
-                    )
-            )
-
-            // Sağ alt dekorasyon
-            Box(
-                modifier = Modifier
-                    .size(150.dp)
-                    .align(Alignment.BottomEnd)
-                    .background(
-                        color = Color.White.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(32.dp)
-                    )
-            )
-        }
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -92,99 +72,87 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Başlık ikonu
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(30.dp))
-                    .background(Color.White.copy(alpha = 0.2f))
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "🧠",
-                    fontSize = 60.sp
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Hoşgeldin başlığı
+            // Başlık - "Mete Hoşgeldin!"
             Text(
-                text = stringResource(R.string.welcome_title),
-                style = MaterialTheme.typography.displaySmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                ),
-                textAlign = TextAlign.Center
+                text = "Mete Hoşgeldin!",
+                style = MaterialTheme.typography.displayLarge,
+                color = PrimaryColor,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
+            
             // Alt başlık
             Text(
-                text = stringResource(R.string.welcome_subtitle),
-                style = MaterialTheme.typography.titleLarge.copy(
-                    fontWeight = FontWeight.Medium,
-                    color = Color.White.copy(alpha = 0.9f)
-                ),
+                text = "5 yaşındaki çocuklar için eğitici oyunlar",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.Gray,
                 textAlign = TextAlign.Center,
-                lineHeight = 28.sp
+                modifier = Modifier.padding(bottom = 32.dp)
             )
-
+            
+            // Animasyonlu görsel
+            Box(
+                modifier = Modifier
+                    .size(250.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(Color.White)
+                    .padding(16.dp)
+            ) {
+                LottieAnimation(
+                    composition = composition,
+                    iterations = Int.MAX_VALUE,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+            
             Spacer(modifier = Modifier.height(48.dp))
-
-            // Başla butonu
+            
+            // Oyuna Başla Butonu
             Button(
-                onClick = onStartClick,
+                onClick = {
+                    voiceManager.speak("Hadi kategori seçelim!")
+                    navController.navigate("category")
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = MaterialTheme.colorScheme.primary
-                ),
-                elevation = ButtonDefaults.buttonElevation(
-                    defaultElevation = 8.dp,
-                    pressedElevation = 4.dp
+                    containerColor = PrimaryColor,
+                    contentColor = Color.White
                 )
             ) {
                 Text(
-                    text = stringResource(R.string.start_button),
-                    style = MaterialTheme.typography.titleLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
+                    text = "Oyuna Başla",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
                 )
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            // Eğitici ikonlar
-            RowWithIcons()
-        }
-    }
-}
-
-@Composable
-fun RowWithIcons() {
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        listOf("🦁", "🔢", "⭐", "🎨", "📝", "🍎").forEach { icon ->
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Eğitici bilgi
             Box(
                 modifier = Modifier
-                    .size(50.dp)
+                    .fillMaxWidth()
                     .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
+                    .background(Color(0xFFE8F5E9))
+                    .padding(16.dp)
             ) {
-                Text(
-                    text = icon,
-                    fontSize = 24.sp
-                )
+                Column {
+                    Text(
+                        text = "🎯 Oyunun Faydaları:",
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = SecondaryColor,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = "• Dikkat gelişimi\n• Hafıza güçlendirme\n• Görsel algı\n• Dil becerileri",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color(0xFF555555)
+                    )
+                }
             }
         }
     }

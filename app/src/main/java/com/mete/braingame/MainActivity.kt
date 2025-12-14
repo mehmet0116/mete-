@@ -12,10 +12,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mete.braingame.data.GameData
+import com.mete.braingame.data.LearningData
 import com.mete.braingame.data.Screen
 import com.mete.braingame.ui.GameViewModel
 import com.mete.braingame.ui.screens.CategorySelectionScreen
 import com.mete.braingame.ui.screens.GameScreen
+import com.mete.braingame.ui.screens.LearningScreen
 import com.mete.braingame.ui.screens.ResultsScreen
 import com.mete.braingame.ui.screens.WelcomeScreen
 import com.mete.braingame.ui.theme.MeteBrainGameTheme
@@ -72,7 +74,7 @@ fun BrainGameApp(voiceManager: VoiceManager) {
                 onCategorySelected = { categoryId ->
                     val category = GameData.categories.find { it.id == categoryId }
                     category?.let {
-                        voiceManager.speak("${it.displayName} kategorisini seçtin. Harika!")
+                        voiceManager.speak("${it.displayName} kategorisine hoş geldin! Hadi öğrenelim!")
                     }
                     viewModel.selectCategory(categoryId)
                 },
@@ -81,12 +83,36 @@ fun BrainGameApp(voiceManager: VoiceManager) {
                 }
             )
         }
+        is Screen.Learning -> {
+            val screen = currentScreen as Screen.Learning
+            val category = GameData.getCategoryById(screen.categoryId)
+            val learningItems = category?.let { LearningData.getLearningItems(it.name) } ?: emptyList()
+            
+            LearningScreen(
+                categoryName = category?.displayName ?: "",
+                learningItems = learningItems,
+                onComplete = {
+                    viewModel.startGameAfterLearning()
+                },
+                onBack = {
+                    viewModel.navigateTo(Screen.CategorySelection)
+                },
+                onItemClick = { item ->
+                    voiceManager.stop()
+                    voiceManager.speak(item.soundText ?: item.nameTr)
+                },
+                childName = "Mete"
+            )
+        }
         is Screen.Game -> {
             GameScreen(
                 viewModel = viewModel,
                 voiceManager = voiceManager,
                 onGameComplete = {
                     viewModel.navigateTo(Screen.Results)
+                },
+                onBackPressed = {
+                    viewModel.navigateTo(Screen.CategorySelection)
                 }
             )
         }

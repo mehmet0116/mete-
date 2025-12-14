@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -161,30 +164,80 @@ fun WelcomeScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Eğitici ikonlar
-            RowWithIcons()
+            // 5 Boyutlu Çocuk Gelişimi
+            Text(
+                text = "5 Boyutlu Gelişim",
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White.copy(alpha = 0.9f)
+                ),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            DevelopmentDimensionsIcons()
         }
     }
 }
 
+data class DevelopmentDimension(
+    val icon: String,
+    val name: String,
+    val description: String
+)
+
 @Composable
-fun RowWithIcons() {
-    androidx.compose.foundation.layout.Row(
+fun DevelopmentDimensionsIcons() {
+    val dimensions = listOf(
+        DevelopmentDimension("🧠", "Bilişsel", "Düşünme ve öğrenme"),
+        DevelopmentDimension("🏃", "Fiziksel", "Hareket ve koordinasyon"),
+        DevelopmentDimension("🤗", "Sosyal", "Arkadaşlık ve paylaşma"),
+        DevelopmentDimension("❤️", "Duygusal", "Hisler ve ifade"),
+        DevelopmentDimension("🗣️", "Dil", "Konuşma ve anlama")
+    )
+    
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        listOf("🦁", "🔢", "⭐", "🎨", "📝", "🍎").forEach { icon ->
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(Color.White.copy(alpha = 0.2f)),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = icon,
-                    fontSize = 24.sp
+        dimensions.forEach { dimension ->
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White.copy(alpha = 0.15f)
                 )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = dimension.icon,
+                        fontSize = 28.sp,
+                        modifier = Modifier.padding(end = 12.dp)
+                    )
+                    Column {
+                        Text(
+                            text = dimension.name,
+                            style = MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        )
+                        Text(
+                            text = dimension.description,
+                            style = MaterialTheme.typography.bodySmall.copy(
+                                color = Color.White.copy(alpha = 0.8f)
+                            ),
+                            fontSize = 11.sp
+                        )
+                    }
+                }
             }
         }
     }

@@ -43,6 +43,12 @@ class GameViewModel : ViewModel() {
         _selectedCategory.value = category
         val questions = GameData.getQuestionsForCategory(categoryId)
         _questions.value = questions
+        // Navigate to learning screen first
+        navigateTo(Screen.Learning(categoryId))
+    }
+
+    fun startGameAfterLearning() {
+        val questions = _questions.value
         startGame(questions)
     }
 

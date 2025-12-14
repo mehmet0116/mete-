@@ -31,6 +31,7 @@ data class Question(
 sealed class Screen {
     data object Welcome : Screen()
     data object CategorySelection : Screen()
+    data class Learning(val categoryId: Int) : Screen()
     data class Game(val categoryId: Int) : Screen()
     data object Results : Screen()
 }

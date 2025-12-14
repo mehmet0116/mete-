@@ -18,6 +18,14 @@ class VoiceManager(context: Context) {
     fun speak(text: String) {
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "vm_${System.currentTimeMillis()}")
     }
+    
+    fun speakQueued(text: String) {
+        tts?.speak(text, TextToSpeech.QUEUE_ADD, null, "vm_${System.currentTimeMillis()}")
+    }
+
+    fun stop() {
+        tts?.stop()
+    }
 
     fun greetUser(name: String) {
         speak("Merhaba $name! Hadi birlikte öğrenelim!")

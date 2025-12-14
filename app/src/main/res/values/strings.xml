@@ -1,53 +1,46 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mete\'nin Beyin Oyunu</string>
     
     <!-- Welcome Screen -->
-    <string name="welcome_title">Hoş Geldin</string>
-    <string name="child_name">Mete! 🎉</string>
-    <string name="welcome_subtitle">Eğlenceli Zeka Oyunları</string>
-    <string name="feature_brain">Zeka Geliştir</string>
-    <string name="feature_english">İngilizce Öğren</string>
-    <string name="feature_fun">Eğlenerek Öğren</string>
-    <string name="start_button">Başla</string>
-    <string name="made_for_mete">Mete için özel olarak hazırlandı ❤️</string>
+    <string name="welcome_title">Mete\'ye Hoşgeldin!</string>
+    <string name="welcome_subtitle">Hadi birlikte öğrenelim ve eğlenelim!</string>
+    <string name="start_button">OYUNA BAŞLA</string>
     
-    <!-- Category Selection -->
-    <string name="select_category">Bir Kategori Seç! 🎯</string>
-    <string name="select_category_subtitle">Hangi konuda oynamak istersin?</string>
+    <!-- Category Screen -->
+    <string name="select_category">Bir Kategori Seç</string>
+    <string name="animals_category">Hayvanlar</string>
+    <string name="numbers_category">Sayılar</string>
+    <string name="shapes_category">Şekiller</string>
+    <string name="colors_category">Renkler</string>
+    <string name="letters_category">Harfler</string>
+    <string name="fruits_category">Meyveler</string>
+    <string name="vegetables_category">Sebzeler</string>
+    <string name="body_parts_category">Vücut Bölümleri</string>
+    <string name="actions_category">Hareketler</string>
+    <string name="time_category">Zaman</string>
     
     <!-- Game Screen -->
-    <string name="back_button">← Geri</string>
-    <string name="question_format">Soru %1$d / %2$d</string>
+    <string name="score">Puan: %d</string>
+    <string name="question">Soru: %d/%d</string>
+    <string name="correct_answer">Doğru! 🎉</string>
+    <string name="wrong_answer">Tekrar deneyelim! 💪</string>
+    <string name="next_question">SONRAKİ SORU</string>
     
     <!-- Results Screen -->
-    <string name="congratulations">Tebrikler Mete! 🎉</string>
-    <string name="score_format">Puan: %1$d / %2$d</string>
-    <string name="play_again">Tekrar Oyna</string>
-    <string name="back_to_categories">Kategorilere Dön</string>
+    <string name="results_title">Oyun Bitti!</string>
+    <string name="final_score">Toplam Puan: %d</string>
+    <string name="play_again">TEKRAR OYNA</string>
+    <string name="select_new_category">YENİ KATEGORİ SEÇ</string>
     
-    <!-- Categories -->
-    <string name="category_animals">Hayvanlar</string>
-    <string name="category_animals_en">Animals</string>
-    <string name="category_numbers">Sayılar</string>
-    <string name="category_numbers_en">Numbers</string>
-    <string name="category_shapes">Şekiller</string>
-    <string name="category_shapes_en">Shapes</string>
-    <string name="category_colors">Renkler</string>
-    <string name="category_colors_en">Colors</string>
-    <string name="category_letters">Harfler</string>
-    <string name="category_letters_en">Letters</string>
-    <string name="category_fruits">Meyveler</string>
-    <string name="category_fruits_en">Fruits</string>
+    <!-- Encouraging Messages -->
+    <string name="excellent">Mükemmel Mete! 🌟</string>
+    <string name="great">Harikasın Mete! 🎯</string>
+    <string name="good">Güzel gidiyorsun Mete! 👍</string>
+    <string name="keep_going">Devam et Mete! 💪</string>
     
     <!-- Voice Messages -->
-    <string name="voice_greeting">Selam Mete! Hadi birlikte öğrenelim!</string>
-    <string name="voice_start">Harika! Hadi başlayalım Mete!</string>
-    <string name="voice_category_selected">%s seçtik Mete! Harika seçim!</string>
-    <string name="voice_praise_1">Bravo Mete! Çok iyi!</string>
-    <string name="voice_praise_2">Aferin Mete! Harikasın!</string>
-    <string name="voice_praise_3">Süpersin Mete!</string>
-    <string name="voice_praise_4">Mükemmel Mete!</string>
-    <string name="voice_praise_5">Tebrikler Mete!</string>
-    <string name="voice_try_again">Tekrar dene Mete, sen yapabilirsin!</string>
+    <string name="voice_welcome">Selam Mete! Hadi birlikte öğrenelim!</string>
+    <string name="voice_bravo">Bravo Mete!</string>
+    <string name="voice_super">Süpersin Mete!</string>
+    <string name="voice_try_again">Tekrar deneyelim Mete!</string>
 </resources>

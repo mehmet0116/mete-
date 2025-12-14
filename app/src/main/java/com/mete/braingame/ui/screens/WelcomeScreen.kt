@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,29 +28,64 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.mete.braingame.R
-import com.mete.braingame.ui.theme.MeteBrainGameTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(
-    onStartGame: () -> Unit,
-    modifier: Modifier = Modifier
+    navController: NavController,
+    onVoiceWelcome: () -> Unit = {}
 ) {
+    // Uygulama açıldığında sesli hoşgeldin mesajı
+    LaunchedEffect(Unit) {
+        delay(500) // Kısa bir gecikme
+        onVoiceWelcome()
+    }
+
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primaryContainer
+                        Color(0xFF6A11CB),
+                        Color(0xFF2575FC)
                     )
                 )
             )
     ) {
+        // Arka plan dekorasyonları
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            // Sol üst dekorasyon
+            Box(
+                modifier = Modifier
+                    .size(100.dp)
+                    .align(Alignment.TopStart)
+                    .background(
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(24.dp)
+                    )
+            )
+
+            // Sağ alt dekorasyon
+            Box(
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.BottomEnd)
+                    .background(
+                        color = Color.White.copy(alpha = 0.1f),
+                        shape = RoundedCornerShape(32.dp)
+                    )
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -58,53 +93,57 @@ fun WelcomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Logo/Icon
+            // Başlık ikonu
             Box(
                 modifier = Modifier
                     .size(120.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-                    .padding(16.dp)
+                    .clip(RoundedCornerShape(30.dp))
+                    .background(Color.White.copy(alpha = 0.2f))
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "App Logo",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Fit
+                Text(
+                    text = "🧠",
+                    fontSize = 60.sp
                 )
             }
-            
+
             Spacer(modifier = Modifier.height(32.dp))
-            
-            // Title
+
+            // Hoşgeldin başlığı
             Text(
                 text = stringResource(R.string.welcome_title),
                 style = MaterialTheme.typography.displaySmall.copy(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 36.sp
+                    color = Color.White
                 ),
-                color = Color.White,
                 textAlign = TextAlign.Center
             )
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
-            // Subtitle
+
+            // Alt başlık
             Text(
                 text = stringResource(R.string.welcome_subtitle),
-                style = MaterialTheme.typography.titleLarge,
-                color = Color.White.copy(alpha = 0.9f),
-                textAlign = TextAlign.Center
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Medium,
+                    color = Color.White.copy(alpha = 0.9f)
+                ),
+                textAlign = TextAlign.Center,
+                lineHeight = 28.sp
             )
-            
+
             Spacer(modifier = Modifier.height(48.dp))
-            
-            // Start Button
+
+            // Başla butonu
             Button(
-                onClick = onStartGame,
+                onClick = {
+                    navController.navigate("category")
+                },
                 modifier = Modifier
-                    .fillMaxWidth(0.8f)
+                    .fillMaxWidth()
                     .height(60.dp),
+                shape = RoundedCornerShape(16.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White,
                     contentColor = MaterialTheme.colorScheme.primary
@@ -122,28 +161,34 @@ fun WelcomeScreen(
                     )
                 )
             }
-            
-            // Character Image (optional)
-            Spacer(modifier = Modifier.height(48.dp))
-            Image(
-                painter = painterResource(id = R.drawable.character_welcome),
-                contentDescription = "Mete Character",
-                modifier = Modifier.size(150.dp),
-                contentScale = ContentScale.Fit
-            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            // Eğitici ikonlar
+            RowWithIcons()
         }
-    }
-    
-    // Auto-speak welcome message
-    LaunchedEffect(Unit) {
-        // voiceManager.speak(stringResource(R.string.voice_welcome))
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun WelcomeScreenPreview() {
-    MeteBrainGameTheme {
-        WelcomeScreen(onStartGame = {})
+fun RowWithIcons() {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        listOf("🦁", "🔢", "⭐", "🎨", "📝", "🍎").forEach { icon ->
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(Color.White.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = icon,
+                    fontSize = 24.sp
+                )
+            }
+        }
     }
 }

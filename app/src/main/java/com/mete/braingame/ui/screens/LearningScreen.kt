@@ -55,7 +55,7 @@ fun LearningScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Header
         Surface(

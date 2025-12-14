@@ -1,8 +1,11 @@
 package com.mete.braingame.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -13,11 +16,12 @@ import com.mete.braingame.ui.GameViewModel
 @Composable
 fun GameScreen(
     viewModel: GameViewModel,
-    onGameComplete: (Int) -> Unit
+    onGameComplete: () -> Unit
 ) {
-    val currentQuestion = viewModel.currentQuestion.value
-    val gameState = viewModel.gameState.value
-    
+    val gameState = viewModel.gameState.collectAsState().value
+    val questions = viewModel.questions.collectAsState().value
+    val currentQuestion = questions.getOrNull(gameState.currentQuestionIndex)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -38,9 +42,9 @@ fun GameScreen(
                 fontWeight = FontWeight.Bold
             )
         }
-        
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         if (currentQuestion != null) {
             // Question
             Card(
@@ -61,19 +65,21 @@ fun GameScreen(
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 32.dp)
                     )
-                    
+
                     // Options
-                    Column(
+                    LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        currentQuestion.options.forEach { option ->
+                        itemsIndexed(currentQuestion.options) { index, option ->
                             Button(
                                 onClick = {
-                                    val isCorrect = option == currentQuestion.correctAnswer
-                                    viewModel.answerQuestion(isCorrect)
-                                    if (gameState.currentQuestionIndex == gameState.totalQuestions - 1) {
-                                        onGameComplete(gameState.score + if (isCorrect) 1 else 0)
+                                    viewModel.selectAnswer(index)
+                                    val isLast = gameState.currentQuestionIndex >= gameState.totalQuestions - 1
+                                    if (isLast) {
+                                        onGameComplete()
+                                    } else {
+                                        viewModel.nextQuestion()
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth()

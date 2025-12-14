@@ -21,7 +21,7 @@ fun ResultsScreen(
     onExit: () -> Unit
 ) {
     // Calculate stars and feedback message
-    val percentage = if (totalQuestions > 0) (correctAnswers.toFloat() / totalQuestions) * 100 else 0f
+    val percentage = if (totalQuestions > 0) (correctAnswers.toFloat() / totalQuestions) * 100f else 0f
     val stars = when {
         percentage >= 80f -> "⭐⭐⭐"
         percentage >= 60f -> "⭐⭐"
@@ -35,8 +35,9 @@ fun ResultsScreen(
     }
     
     // Speak the results
+    val voiceFeedback = "Oyun bitti! $totalQuestions sorudan $correctAnswers tanesini doğru cevapladın. $feedbackMessage"
     LaunchedEffect(Unit) {
-        voiceManager.speak("Oyun bitti! $totalQuestions sorudan $correctAnswers tanesini doğru cevapladın. $feedbackMessage")
+        voiceManager.speak(voiceFeedback)
     }
 
     Column(

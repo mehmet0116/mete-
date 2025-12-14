@@ -2,6 +2,7 @@ package com.mete.braingame
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +57,25 @@ fun BrainGameApp(voiceManager: VoiceManager) {
 
     val currentScreen by viewModel.currentScreen.collectAsState()
     val gameState by viewModel.gameState.collectAsState()
+
+    // Handle system back button
+    BackHandler(enabled = currentScreen !is Screen.Welcome) {
+        when (currentScreen) {
+            is Screen.CategorySelection -> {
+                viewModel.navigateTo(Screen.Welcome)
+            }
+            is Screen.Learning -> {
+                viewModel.navigateTo(Screen.CategorySelection)
+            }
+            is Screen.Game -> {
+                viewModel.navigateTo(Screen.CategorySelection)
+            }
+            is Screen.Results -> {
+                viewModel.navigateTo(Screen.Welcome)
+            }
+            else -> { /* Do nothing for Welcome screen */ }
+        }
+    }
 
     when (currentScreen) {
         is Screen.Welcome -> {

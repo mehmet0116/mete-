@@ -3,18 +3,42 @@ package com.mete.braingame.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mete.braingame.util.VoiceManager
 
 @Composable
 fun ResultsScreen(
     score: Int,
+    correctAnswers: Int,
+    totalQuestions: Int,
+    voiceManager: VoiceManager,
     onPlayAgain: () -> Unit,
     onExit: () -> Unit
 ) {
+    // Calculate stars and feedback message
+    val percentage = if (totalQuestions > 0) (correctAnswers.toFloat() / totalQuestions) * 100 else 0f
+    val stars = when {
+        percentage >= 80f -> "⭐⭐⭐"
+        percentage >= 60f -> "⭐⭐"
+        else -> "⭐"
+    }
+    
+    val feedbackMessage = when {
+        percentage >= 80f -> "Harika iş çıkardın Mete! Sen bir dahisin!"
+        percentage >= 60f -> "Çok iyi gidiyorsun Mete! Devam et!"
+        else -> "İyi denemeydi Mete! Tekrar deneyelim!"
+    }
+    
+    // Speak the results
+    LaunchedEffect(Unit) {
+        voiceManager.speak("Oyun bitti! $correctAnswers doğru $totalQuestions soru. $feedbackMessage")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -50,12 +74,13 @@ fun ResultsScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
                 
-                // Star rating based on score
-                val stars = when {
-                    score >= 8 -> "⭐⭐⭐"
-                    score >= 5 -> "⭐⭐"
-                    else -> "⭐"
-                }
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "$correctAnswers / $totalQuestions doğru",
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 
                 Text(
                     text = stars,
@@ -68,11 +93,7 @@ fun ResultsScreen(
         Spacer(modifier = Modifier.height(32.dp))
         
         Text(
-            text = when {
-                score >= 8 -> "Harika iş çıkardın Mete! Sen bir dahisin! 🧠"
-                score >= 5 -> "Çok iyi gidiyorsun Mete! Devam et! 👍"
-                else -> "İyi denemeydi Mete! Tekrar deneyelim! 💪"
-            },
+            text = feedbackMessage,
             fontSize = 18.sp,
             textAlign = androidx.compose.ui.text.style.TextAlign.Center
         )

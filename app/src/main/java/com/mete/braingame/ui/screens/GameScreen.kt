@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -12,15 +13,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mete.braingame.ui.GameViewModel
+import com.mete.braingame.util.VoiceManager
 
 @Composable
 fun GameScreen(
     viewModel: GameViewModel,
+    voiceManager: VoiceManager,
     onGameComplete: () -> Unit
 ) {
     val gameState = viewModel.gameState.collectAsState().value
     val questions = viewModel.questions.collectAsState().value
     val currentQuestion = questions.getOrNull(gameState.currentQuestionIndex)
+
+    // Read the question when it changes
+    LaunchedEffect(currentQuestion?.id) {
+        currentQuestion?.let {
+            voiceManager.speak(it.text)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -45,7 +55,8 @@ fun GameScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        if (currentQuestion != null) {
+        // Only show question if it exists
+        currentQuestion?.let { question ->
             // Question
             Card(
                 modifier = Modifier
@@ -60,7 +71,7 @@ fun GameScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = currentQuestion.text,
+                        text = question.text,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(bottom = 32.dp)
@@ -71,10 +82,19 @@ fun GameScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        itemsIndexed(currentQuestion.options) { index, option ->
+                        itemsIndexed(question.options) { index, option ->
                             Button(
                                 onClick = {
+                                    val isCorrect = index == question.correctAnswer
                                     viewModel.selectAnswer(index)
+                                    
+                                    // Voice feedback for answer
+                                    if (isCorrect) {
+                                        voiceManager.speak("Doğru! Aferin Mete!")
+                                    } else {
+                                        voiceManager.speak("Tekrar deneyelim!")
+                                    }
+                                    
                                     val isLast = gameState.currentQuestionIndex >= gameState.totalQuestions - 1
                                     if (isLast) {
                                         onGameComplete()
@@ -89,13 +109,6 @@ fun GameScreen(
                         }
                     }
                 }
-            }
-        } else {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Soru yükleniyor...", fontSize = 20.sp)
             }
         }
     }

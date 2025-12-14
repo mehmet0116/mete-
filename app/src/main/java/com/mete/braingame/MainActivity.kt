@@ -19,25 +19,37 @@ import com.mete.braingame.ui.screens.GameScreen
 import com.mete.braingame.ui.screens.ResultsScreen
 import com.mete.braingame.ui.screens.WelcomeScreen
 import com.mete.braingame.ui.theme.MeteBrainGameTheme
+import com.mete.braingame.util.VoiceManager
 
 class MainActivity : ComponentActivity() {
+    private lateinit var voiceManager: VoiceManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Initialize VoiceManager
+        voiceManager = VoiceManager(this)
+        
         setContent {
             MeteBrainGameTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    BrainGameApp()
+                    BrainGameApp(voiceManager)
                 }
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        voiceManager.shutdown()
+    }
 }
 
 @Composable
-fun BrainGameApp() {
+fun BrainGameApp(voiceManager: VoiceManager) {
     val viewModel: GameViewModel = viewModel()
 
     val currentScreen by viewModel.currentScreen.collectAsState()
@@ -48,6 +60,9 @@ fun BrainGameApp() {
             WelcomeScreen(
                 onStartClick = {
                     viewModel.navigateTo(Screen.CategorySelection)
+                },
+                onVoiceWelcome = {
+                    voiceManager.speak("Mete hoşgeldin! Hadi birlikte öğrenelim ve eğlenelim!")
                 }
             )
         }
@@ -55,6 +70,10 @@ fun BrainGameApp() {
             CategorySelectionScreen(
                 categories = GameData.categories,
                 onCategorySelected = { categoryId ->
+                    val category = GameData.categories.find { it.id == categoryId }
+                    category?.let {
+                        voiceManager.speak("${it.displayName} kategorisini seçtin. Harika!")
+                    }
                     viewModel.selectCategory(categoryId)
                 },
                 onBackPressed = {
@@ -65,6 +84,7 @@ fun BrainGameApp() {
         is Screen.Game -> {
             GameScreen(
                 viewModel = viewModel,
+                voiceManager = voiceManager,
                 onGameComplete = {
                     viewModel.navigateTo(Screen.Results)
                 }
@@ -73,6 +93,9 @@ fun BrainGameApp() {
         is Screen.Results -> {
             ResultsScreen(
                 score = gameState.score,
+                correctAnswers = gameState.correctAnswers,
+                totalQuestions = gameState.totalQuestions,
+                voiceManager = voiceManager,
                 onPlayAgain = {
                     viewModel.resetGame()
                     viewModel.navigateTo(Screen.CategorySelection)

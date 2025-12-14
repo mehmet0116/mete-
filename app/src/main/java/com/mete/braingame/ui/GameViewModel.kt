@@ -1,85 +1,201 @@
 package com.mete.braingame.ui
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.mete.braingame.data.GameCategory
+import androidx.lifecycle.viewModelScope
+import com.mete.braingame.data.Category
 import com.mete.braingame.data.GameData
+import com.mete.braingame.data.GameResult
+import com.mete.braingame.data.GameState
 import com.mete.braingame.data.Question
-
-sealed class Screen {
-    data object Welcome : Screen()
-    data object CategorySelection : Screen()
-    data object Learning : Screen()
-    data object Game : Screen()
-    data object Results : Screen()
-    data object Progress : Screen()
-}
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class GameViewModel : ViewModel() {
-    var currentScreen by mutableStateOf<Screen>(Screen.Welcome)
-        private set
     
-    var selectedCategory by mutableStateOf<GameCategory?>(null)
-        private set
+    // UI state
+    private val _uiState = MutableStateFlow(GameUiState())
+    val uiState: StateFlow<GameUiState> = _uiState.asStateFlow()
     
-    var currentQuestions by mutableStateOf<List<Question>>(emptyList())
-        private set
+    // Game state
+    private val _gameState = MutableStateFlow(GameState())
+    val gameState: StateFlow<GameState> = _gameState.asStateFlow()
     
-    var finalScore by mutableIntStateOf(0)
-        private set
+    // Categories
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories: StateFlow<List<Category>> = _categories.asStateFlow()
     
-    var totalQuestions by mutableIntStateOf(0)
-        private set
+    // Current questions
+    private val _currentQuestions = MutableStateFlow<List<Question>>(emptyList())
+    val currentQuestions: StateFlow<List<Question>> = _currentQuestions.asStateFlow()
     
-    fun navigateToCategories() {
-        currentScreen = Screen.CategorySelection
+    // Game result
+    private val _gameResult = MutableStateFlow<GameResult?>(null)
+    val gameResult: StateFlow<GameResult?> = _gameResult.asStateFlow()
+    
+    init {
+        loadCategories()
     }
     
-    fun selectCategory(category: GameCategory) {
-        selectedCategory = category
-        currentQuestions = GameData.getQuestionsByCategory(category.id)
-        // First go to learning screen before game
-        currentScreen = Screen.Learning
+    private fun loadCategories() {
+        _categories.value = GameData.categories
     }
     
-    fun completeLearning() {
-        // After learning, go to game
-        currentScreen = Screen.Game
+    fun selectCategory(category: Category) {
+        _uiState.update { it.copy(selectedCategory = category) }
+        startGame(category.id)
     }
     
-    fun finishGame(score: Int, total: Int) {
-        finalScore = score
-        totalQuestions = total
-        currentScreen = Screen.Results
-    }
-    
-    fun playAgain() {
-        selectedCategory?.let { category ->
-            currentQuestions = GameData.getQuestionsByCategory(category.id)
-            currentScreen = Screen.Game
+    fun startGame(categoryId: Int) {
+        viewModelScope.launch {
+            // Soruları yükle
+            val questions = GameData.getShuffledQuestions(categoryId, 5)
+            _currentQuestions.value = questions
+            
+            // Oyun durumunu sıfırla
+            _gameState.update {
+                it.copy(
+                    currentQuestionIndex = 0,
+                    score = 0,
+                    totalQuestions = questions.size,
+                    isGameOver = false,
+                    selectedAnswer = null,
+                    isAnswerCorrect = null,
+                    timeRemaining = 30
+                )
+            }
+            
+            // Ekranı değiştir
+            _uiState.update {
+                it.copy(
+                    currentScreen = Screen.GAME,
+                    isLoading = false
+                )
+            }
         }
     }
     
-    fun backToCategories() {
-        selectedCategory = null
-        currentQuestions = emptyList()
-        currentScreen = Screen.CategorySelection
+    fun selectAnswer(answerIndex: Int) {
+        val currentQuestion = getCurrentQuestion() ?: return
+        val isCorrect = answerIndex == currentQuestion.correctAnswer
+        
+        _gameState.update { state ->
+            state.copy(
+                selectedAnswer = answerIndex,
+                isAnswerCorrect = isCorrect,
+                score = if (isCorrect) state.score + 10 else state.score
+            )
+        }
+        
+        // 2 saniye sonra sonraki soruya geç
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(2000)
+            nextQuestion()
+        }
     }
     
-    fun backFromGame() {
-        selectedCategory = null
-        currentQuestions = emptyList()
-        currentScreen = Screen.CategorySelection
+    private fun nextQuestion() {
+        _gameState.update { state ->
+            val nextIndex = state.currentQuestionIndex + 1
+            
+            if (nextIndex >= state.totalQuestions) {
+                // Oyun bitti
+                finishGame()
+                state.copy(isGameOver = true)
+            } else {
+                // Sonraki soru
+                state.copy(
+                    currentQuestionIndex = nextIndex,
+                    selectedAnswer = null,
+                    isAnswerCorrect = null,
+                    timeRemaining = 30
+                )
+            }
+        }
     }
     
-    fun navigateToProgress() {
-        currentScreen = Screen.Progress
+    private fun finishGame() {
+        val state = _gameState.value
+        val questions = _currentQuestions.value
+        
+        // Doğru cevap sayısını hesapla
+        val correctAnswers = questions.count { question ->
+            // Burada gerçekte kullanıcının cevaplarını takip etmemiz gerekir
+            // Şimdilik basit bir hesaplama yapıyoruz
+            state.score / 10
+        }
+        
+        val result = GameResult(
+            score = state.score,
+            totalQuestions = state.totalQuestions,
+            correctAnswers = correctAnswers,
+            wrongAnswers = state.totalQuestions - correctAnswers,
+            timeSpent = 30 * state.totalQuestions - state.timeRemaining,
+            stars = if (state.totalQuestions > 0) {
+                when {
+                    correctAnswers >= state.totalQuestions * 0.9 -> 3
+                    correctAnswers >= state.totalQuestions * 0.7 -> 2
+                    else -> 1
+                }
+            } else {
+                0
+            }
+        )
+        
+        _gameResult.value = result
+        _uiState.update { it.copy(currentScreen = Screen.RESULTS) }
     }
     
-    fun backFromProgress() {
-        currentScreen = Screen.CategorySelection
+    fun getCurrentQuestion(): Question? {
+        val index = _gameState.value.currentQuestionIndex
+        return if (index < _currentQuestions.value.size) {
+            _currentQuestions.value[index]
+        } else {
+            null
+        }
     }
+    
+    fun navigateToWelcome() {
+        _uiState.update { it.copy(currentScreen = Screen.WELCOME) }
+    }
+    
+    fun navigateToCategories() {
+        _uiState.update { it.copy(currentScreen = Screen.CATEGORIES) }
+    }
+    
+    fun resetGame() {
+        _gameState.value = GameState()
+        _currentQuestions.value = emptyList()
+        _gameResult.value = null
+        _uiState.update {
+            it.copy(
+                selectedCategory = null,
+                currentScreen = Screen.CATEGORIES
+            )
+        }
+    }
+    
+    fun updateTimeRemaining(time: Int) {
+        _gameState.update { it.copy(timeRemaining = time) }
+        
+        if (time <= 0) {
+            nextQuestion()
+        }
+    }
+}
+
+data class GameUiState(
+    val currentScreen: Screen = Screen.WELCOME,
+    val selectedCategory: Category? = null,
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
+)
+
+enum class Screen {
+    WELCOME,
+    CATEGORIES,
+    GAME,
+    RESULTS
 }

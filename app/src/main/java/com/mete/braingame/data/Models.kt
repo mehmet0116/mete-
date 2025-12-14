@@ -1,96 +1,67 @@
 package com.mete.braingame.data
 
+import androidx.compose.runtime.Immutable
+
 /**
- * Represents a game category
+ * Oyun kategorisi modeli
  */
-data class GameCategory(
-    val id: String,
+@Immutable
+data class Category(
+    val id: Int,
     val name: String,
-    val nameEn: String,
-    val icon: String,
-    val color: Long
+    val iconRes: String,
+    val description: String,
+    val color: Long,
+    val totalQuestions: Int
 )
 
 /**
- * Question type
+ * Soru modeli
  */
-enum class QuestionType {
-    PATTERN,
-    MATCHING,
-    COUNTING,
-    MEMORY,
-    QUIZ
-}
-
-/**
- * Represents a single question
- */
+@Immutable
 data class Question(
-    val id: String,
-    val type: QuestionType,
-    val category: String,
-    val question: String,
-    val questionEn: String,
+    val id: Int,
+    val categoryId: Int,
+    val text: String,
+    val imageRes: String? = null,
+    val soundRes: String? = null,
     val options: List<String>,
     val correctAnswer: Int,
-    val items: List<String> = emptyList(),
-    val voice: String? = null
+    val explanation: String? = null
 )
 
 /**
- * Game state
+ * Oyun durumu
  */
 data class GameState(
-    val currentCategory: String? = null,
-    val currentQuestion: Int = 0,
+    val currentQuestionIndex: Int = 0,
     val score: Int = 0,
-    val questionsAnswered: Int = 0,
-    val correctAnswers: Int = 0
-)
-
-/**
- * Difficulty level for questions
- */
-enum class DifficultyLevel {
-    EASY,
-    MEDIUM,
-    HARD
-}
-
-/**
- * Progress tracking for a category
- */
-data class CategoryProgress(
-    val categoryId: String,
     val totalQuestions: Int = 0,
-    val completedQuestions: Int = 0,
-    val correctAnswers: Int = 0,
-    val masteredWords: Set<String> = emptySet(),
-    val lastPlayedTime: Long = 0L
+    val isGameOver: Boolean = false,
+    val selectedAnswer: Int? = null,
+    val isAnswerCorrect: Boolean? = null,
+    val timeRemaining: Int = 30 // saniye
 )
 
 /**
- * User achievement
+ * Oyun sonucu
  */
-data class Achievement(
-    val id: String,
-    val title: String,
-    val description: String,
-    val icon: String,
-    val isUnlocked: Boolean = false,
-    val unlockedDate: Long? = null
-)
-
-/**
- * Overall user progress
- */
-data class UserProgress(
-    val totalScore: Int = 0,
-    val totalQuestionsAnswered: Int = 0,
-    val totalCorrectAnswers: Int = 0,
-    val categoryProgress: Map<String, CategoryProgress> = emptyMap(),
-    val achievements: List<Achievement> = emptyList(),
-    val currentStreak: Int = 0,
-    val longestStreak: Int = 0,
-    val lastPlayedDate: String = ""
-)
+data class GameResult(
+    val score: Int,
+    val totalQuestions: Int,
+    val correctAnswers: Int,
+    val wrongAnswers: Int,
+    val timeSpent: Int, // saniye
+    val stars: Int // 1-3 yıldız
+) {
+    val percentage: Float
+        get() = if (totalQuestions > 0) (correctAnswers.toFloat() / totalQuestions) * 100 else 0f
+    
+    fun calculateStars(): Int {
+        return when {
+            percentage >= 90 -> 3
+            percentage >= 70 -> 2
+            else -> 1
+        }
+    }
+}

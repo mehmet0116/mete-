@@ -1,201 +1,177 @@
 package com.mete.braingame.ui.screens
 
-import androidx.compose.animation.*
-import androidx.compose.animation.core.*
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mete.braingame.ui.theme.*
-import kotlinx.coroutines.delay
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.mete.braingame.R
+import com.mete.braingame.ui.GameViewModel
+import com.mete.braingame.ui.theme.GradientEnd
+import com.mete.braingame.ui.theme.GradientStart
+import com.mete.braingame.util.VoiceManager
 
 @Composable
 fun WelcomeScreen(
-    onStart: () -> Unit,
-    onVoiceGreeting: () -> Unit
+    viewModel: GameViewModel = hiltViewModel(),
+    voiceManager: VoiceManager? = null
 ) {
-    var isVisible by remember { mutableStateOf(false) }
-    val scale by animateFloatAsState(
-        targetValue = if (isVisible) 1f else 0.8f,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "scale"
-    )
+    val uiState by viewModel.uiState.collectAsState()
     
+    // Hoşgeldin mesajını seslendir
     LaunchedEffect(Unit) {
-        delay(300)
-        isVisible = true
-        delay(500)
-        onVoiceGreeting()
+        voiceManager?.speakWithGreeting()
     }
     
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Primary.copy(alpha = 0.1f),
-                        Background
-                    )
+                brush = Brush.verticalGradient(
+                    colors = listOf(GradientStart, GradientEnd)
                 )
-            ),
-        contentAlignment = Alignment.Center
+            )
     ) {
-        AnimatedVisibility(
-            visible = isVisible,
-            enter = fadeIn() + scaleIn(),
-            exit = fadeOut() + scaleOut()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Column(
+            // Logo/İkon
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(24.dp)
-                    .scale(scale),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(32.dp)
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.White.copy(alpha = 0.2f)),
+                contentAlignment = Alignment.Center
             ) {
-                // Title Section
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "Hoş Geldin",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = TextPrimary,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Mete! 🎉",
-                        style = MaterialTheme.typography.displayMedium,
-                        color = Primary,
-                        fontWeight = FontWeight.ExtraBold
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "Eğlenceli Zeka Oyunları",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = TextSecondary
-                    )
-                }
-                
-                // Features Section
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    FeatureItem(icon = "🧠", text = "Zeka\nGeliştir", delay = 0)
-                    FeatureItem(icon = "🌍", text = "İngilizce\nÖğren", delay = 100)
-                    FeatureItem(icon = "🎮", text = "Eğlenerek\nÖğren", delay = 200)
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Start Button
-                Button(
-                    onClick = onStart,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .padding(horizontal = 32.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Primary
-                    ),
-                    shape = RoundedCornerShape(32.dp),
-                    elevation = ButtonDefaults.buttonElevation(
-                        defaultElevation = 8.dp,
-                        pressedElevation = 12.dp
-                    )
-                ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = "🚀",
-                            fontSize = 24.sp,
-                            modifier = Modifier.padding(end = 12.dp)
-                        )
-                        Text(
-                            text = "Başla",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                // Footer
                 Text(
-                    text = "Mete için özel olarak hazırlandı ❤️",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TextSecondary,
-                    textAlign = TextAlign.Center
+                    text = "🧠",
+                    fontSize = 60.sp,
+                    modifier = Modifier.padding(8.dp)
                 )
             }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+            
+            // Başlık
+            Text(
+                text = "Mete'nin Beyin Oyunu",
+                style = MaterialTheme.typography.displaySmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                ),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Açıklama
+            Text(
+                text = "Eğlenerek öğrenmeye hazır mısın?",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    color = Color.White.copy(alpha = 0.9f)
+                ),
+                textAlign = TextAlign.Center
+            )
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = "Bilişsel becerilerini geliştir, Türkçe öğren, eğlen!",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = Color.White.copy(alpha = 0.8f)
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+            
+            Spacer(modifier = Modifier.height(48.dp))
+            
+            // Başla Butonu
+            Button(
+                onClick = { viewModel.navigateToCategories() },
+                modifier = Modifier
+                    .fillMaxWidth(0.8f)
+                    .height(60.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White,
+                    contentColor = GradientStart
+                ),
+                shape = MaterialTheme.shapes.large
+            ) {
+                Text(
+                    text = "OYNAMAYA BAŞLA",
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    fontSize = 18.sp
+                )
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
+            
+            // Özellikler
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                FeatureItem(text = "🎮 10 Farklı Kategori")
+                FeatureItem(text = "🔊 Türkçe Sesli Geri Bildirim")
+                FeatureItem(text = "⭐ 3 Yıldızlı Puanlama Sistemi")
+                FeatureItem(text = "👶 Okul Öncesi Çocuklar İçin")
+            }
         }
+        
+        // Alt bilgi
+        Text(
+            text = "Mete için sevgiyle hazırlandı ❤️",
+            style = MaterialTheme.typography.bodySmall.copy(
+                color = Color.White.copy(alpha = 0.6f)
+            ),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp)
+        )
     }
 }
 
 @Composable
-fun FeatureItem(icon: String, text: String, delay: Long) {
-    var isVisible by remember { mutableStateOf(false) }
-    
-    LaunchedEffect(Unit) {
-        delay(delay)
-        isVisible = true
-    }
-    
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn() + slideInVertically { it / 2 }
-    ) {
-        Card(
-            modifier = Modifier
-                .width(100.dp)
-                .height(120.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Surface
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    text = icon,
-                    fontSize = 36.sp,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextPrimary,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Medium,
-                    lineHeight = 16.sp
-                )
-            }
-        }
-    }
+fun FeatureItem(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium.copy(
+            color = Color.White.copy(alpha = 0.9f)
+        ),
+        modifier = Modifier.padding(vertical = 4.dp)
+    )
 }

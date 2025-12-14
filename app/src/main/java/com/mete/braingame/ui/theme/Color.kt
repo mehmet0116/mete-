@@ -2,27 +2,42 @@ package com.mete.braingame.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Category Colors
-val AnimalsColor = Color(0xFFFF6B6B)
-val NumbersColor = Color(0xFF4ECDC4)
-val ShapesColor = Color(0xFF95E1D3)
-val ColorsColor = Color(0xFFF38181)
-val LettersColor = Color(0xFFAA96DA)
-val FruitsColor = Color(0xFFFCBAD3)
-
 // Primary Colors
-val Primary = Color(0xFF6366F1)
-val PrimaryVariant = Color(0xFF4F46E5)
-val Secondary = Color(0xFF10B981)
+val PrimaryColor = Color(0xFF6200EE)
+val PrimaryVariant = Color(0xFF3700B3)
+val SecondaryColor = Color(0xFF03DAC6)
+val SecondaryVariant = Color(0xFF018786)
 
 // Background Colors
-val Background = Color(0xFFF5F7FA)
-val Surface = Color(0xFFFFFFFF)
-
-// Status Colors
-val CorrectAnswer = Color(0xFF10B981)
-val WrongAnswer = Color(0xFFEF4444)
+val BackgroundColor = Color(0xFFFFFFFF)
+val SurfaceColor = Color(0xFFFFFFFF)
+val ErrorColor = Color(0xFFB00020)
 
 // Text Colors
-val TextPrimary = Color(0xFF1F2937)
-val TextSecondary = Color(0xFF6B7280)
+val OnPrimaryColor = Color(0xFFFFFFFF)
+val OnSecondaryColor = Color(0xFF000000)
+val OnBackgroundColor = Color(0xFF000000)
+val OnSurfaceColor = Color(0xFF000000)
+val OnErrorColor = Color(0xFFFFFFFF)
+
+// Game Colors
+val CorrectColor = Color(0xFF4CAF50)
+val WrongColor = Color(0xFFF44336)
+val NeutralColor = Color(0xFF9E9E9E)
+val HighlightColor = Color(0xFFFFC107)
+
+// Category Colors
+val AnimalColor = Color(0xFF4CAF50)
+val NumberColor = Color(0xFF2196F3)
+val ShapeColor = Color(0xFFFF9800)
+val ColorColor = Color(0xFFE91E63)
+val FruitColor = Color(0xFF9C27B0)
+val VegetableColor = Color(0xFF009688)
+val BodyColor = Color(0xFF795548)
+val ActionColor = Color(0xFF607D8B)
+val TimeColor = Color(0xFF3F51B5)
+val LetterColor = Color(0xFF00BCD4)
+
+// Gradient Colors
+val GradientStart = Color(0xFF6A11CB)
+val GradientEnd = Color(0xFF2575FC)

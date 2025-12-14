@@ -45,17 +45,13 @@ jobs:
           git config --global user.email "${GIT_COMMITTER_EMAIL}"
           git config --global pull.rebase false
           git config --global push.autoSetupRemote true
+          # Token ile authentication ekleyin
+          git config --global http.https://github.com/.extraheader "AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}"
 
       - name: Senkronizasyon
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "Uzak değişiklikler kontrol ediliyor..."
-          
-          # Remote URL'i token ile güncelle
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
-          
           git fetch origin || true
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
           if [ -z "$CURRENT_BRANCH" ] || [ "$CURRENT_BRANCH" = "HEAD" ]; then
@@ -67,7 +63,7 @@ jobs:
               echo "Yerel ve uzak senkronize."
             else
               echo "Uzak değişiklikler birleştiriliyor..."
-              git pull origin "$CURRENT_BRANCH" --no-edit --no-rebase || true
+              git pull origin "$CURRENT_BRANCH" --no-edit || true
             fi
           else
             echo "Uzakta $CURRENT_BRANCH dalı bulunamadı; devam ediliyor."
@@ -626,4 +622,231 @@ jobs:
                   if Path(dirPath).exists() and Path(dirPath).is_dir():
                       import shutil
                       shutil.rmtree(dirPath)
-                      operations.append(f"Klasör silindi: $
+                      operations.append(f"Klasör silindi: {dirPath}")
+              for m in re.finditer(r'---DELETE:\s*(.+?)\s*---', aiResponse):
+                  filePath = m.group(1).strip()
+                  if Path(filePath).exists():
+                      Path(filePath).unlink()
+                      operations.append(f"Dosya silindi: {filePath}")
+              for m in re.finditer(r'---FILE:\s*(.+?)\s*---\n([\s\S]*?)---END---', aiResponse):
+                  filePath = m.group(1).strip()
+                  content = m.group(2).rstrip()
+                  dirPath = Path(filePath).parent
+                  if dirPath != Path('.'):
+                      dirPath.mkdir(parents=True, exist_ok=True)
+                  Path(filePath).write_text(content, encoding='utf-8')
+                  operations.append(f"Yazıldı: {filePath}")
+
+              write_output("operations", '\n'.join(operations) if operations else 'İşlem yapılmadı')
+              write_output("count", str(len(operations)))
+              write_output("success", "true")
+          
+          PYTHON_EOF
+
+      - name: Interactive Question Handler
+        if: steps.deepseek.outputs.has_question == 'true'
+        run: |
+          echo "## 🤖 DEEPSEEK SORU SORDU"
+          echo ""
+          echo "**Görev:** ${{ github.event.inputs.task }}"
+          echo ""
+          echo "### ❓ SORU:"
+          echo "${{ steps.deepseek.outputs.question }}"
+          echo ""
+          echo "### 📋 MEVCUT DOSYALAR:"
+          echo "${{ steps.context.outputs.files }}"
+          echo ""
+          echo "### 🚀 SONRAKİ ADIMLAR:"
+          echo "1. **Yanıtını hazırla:** AI'nın sorusunu cevapla"
+          echo "2. **Dosya ekle:** Eksik dosyaları 'context_files' alanına ekle"
+          echo "3. **Yeniden çalıştır:** Workflow'u tekrar başlat"
+          echo ""
+          echo "### 💡 ÖRNEK:"
+          echo "```yaml"
+          echo "task: \"${{ github.event.inputs.task }}\""
+          echo "context_files: \"${{ steps.context.outputs.files }},app/src/main/AndroidManifest.xml,build.gradle\""
+          echo "```"
+          echo ""
+          echo "---"
+          echo "*Interaktif mod: AI öğreniyor, daha iyi kod yazıyor!*"
+          
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.task }}" ]; then
+            echo "## AI Sordu: ${{ github.event.inputs.task }}" > ai_question.md
+            echo "" >> ai_question.md
+            echo "**Soru:** ${{ steps.deepseek.outputs.question }}" >> ai_question.md
+            echo "" >> ai_question.md
+            echo "**Mevcut Dosyalar:** ${{ steps.context.outputs.files }}" >> ai_question.md
+            echo "" >> ai_question.md
+            echo "**Yanıt vermek için:**" >> ai_question.md
+            echo "1. Eksik dosyaları ekle: \`${{ steps.context.outputs.files }},yeni_dosya.kt\`" >> ai_question.md
+            echo "2. Workflow'u yeniden çalıştır" >> ai_question.md
+          fi
+
+      - name: Derleme
+        id: build
+        if: steps.deepseek.outputs.success == 'true' && steps.deepseek.outputs.has_question != 'true'
+        continue-on-error: true
+        run: |
+          set -euo pipefail
+          TYPE="${{ steps.detect.outputs.type }}"
+          echo "Derleme başlatılıyor... (Tip: $TYPE)"
+          case "$TYPE" in
+            android)
+              if [ -f "gradlew" ]; then
+                chmod +x gradlew
+                ./gradlew assembleDebug -Pandroid.suppressKotlinVersionCompatibilityCheck=true --no-daemon && echo "BUILD_STATUS=Başarılı" >> $GITHUB_ENV || echo "BUILD_STATUS=Derleme hatası" >> $GITHUB_ENV
+              else
+                echo "BUILD_STATUS=Gradle wrapper bulunamadı" >> $GITHUB_ENV
+              fi
+              ;;
+            node)
+              if [ -f "package.json" ]; then
+                npm ci --silent || npm install --silent
+                npm run build --if-present && echo "BUILD_STATUS=Başarılı" >> $GITHUB_ENV || echo "BUILD_STATUS=Build hatası" >> $GITHUB_ENV
+              else
+                echo "BUILD_STATUS=package.json bulunamadı" >> $GITHUB_ENV
+              fi
+              ;;
+            python)
+              if [ -f "requirements.txt" ]; then
+                pip install -r requirements.txt --quiet
+              fi
+              echo "BUILD_STATUS=Bağımlılıklar yüklendi" >> $GITHUB_ENV
+              ;;
+            rust)
+              cargo build --release && echo "BUILD_STATUS=Başarılı" >> $GITHUB_ENV || echo "BUILD_STATUS=Cargo hatası" >> $GITHUB_ENV
+              ;;
+            go)
+              go build ./... && echo "BUILD_STATUS=Başarılı" >> $GITHUB_ENV || echo "BUILD_STATUS=Go hatası" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "BUILD_STATUS=Derleme gerekmedi" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Değişiklikleri Kaydet
+        if: steps.deepseek.outputs.success == 'true' && steps.deepseek.outputs.has_question != 'true'
+        run: |
+          set -euo pipefail
+          echo "Değişiklikler kontrol ediliyor..."
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Değişiklik yok"
+            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+          else
+            echo "Değişiklikler tespit edildi"
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+            TASK="${{ github.event.inputs.task || (github.event.comment && github.event.comment.body) || (github.event.issue && github.event.issue.body) || 'Otomatik güncelleme' }}"
+            TASK_SHORT=$(echo "$TASK" | head -c 100)
+            git -c user.name="${GIT_COMMITTER_NAME}" -c user.email="${GIT_COMMITTER_EMAIL}" commit -m "DeepSeek Ultimate: $TASK_SHORT" -m "Model: ${{ steps.model_selector.outputs.model }}" -m "Kompleksite: ${{ steps.model_selector.outputs.complexity }}" || true
+          fi
+
+      - name: Değişiklikleri Gönder
+        if: env.HAS_CHANGES == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "Değişiklikler gönderiliyor..."
+          
+          # Remote URL'i token ile güncelle
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
+          CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
+          echo "Mevcut dal: $CURRENT_BRANCH"
+          
+          # Pull yap (merge conflict olursa önlem al)
+          git pull origin "$CURRENT_BRANCH" --no-edit --no-rebase || echo "Pull sırasında hata, devam ediliyor..."
+          
+          # Push yap
+          git push origin "$CURRENT_BRANCH"
+          echo "Push başarılı!"
+
+      - name: Sonuç Raporu
+        uses: actions/github-script@v7
+        if: always()
+        env:
+          OPERATIONS: ${{ steps.deepseek.outputs.operations }}
+          COUNT: ${{ steps.deepseek.outputs.count }}
+          SUCCESS: ${{ steps.deepseek.outputs.success }}
+          ERROR: ${{ steps.deepseek.outputs.error }}
+          HAS_QUESTION: ${{ steps.deepseek.outputs.has_question }}
+          QUESTION: ${{ steps.deepseek.outputs.question }}
+          BUILD_STATUS: ${{ env.BUILD_STATUS }}
+          PROJECT_TYPE: ${{ steps.detect.outputs.type }}
+          PROJECT_DETAILS: ${{ steps.detect.outputs.details }}
+          MODEL: ${{ steps.model_selector.outputs.model }}
+          COMPLEXITY: ${{ steps.model_selector.outputs.complexity }}
+          CONTEXT_FILES: ${{ steps.context.outputs.files }}
+          SMART_MODE: ${{ steps.context.outputs.smart_mode }}
+        with:
+          script: |
+            const success = process.env.SUCCESS === 'true';
+            const hasQuestion = process.env.HAS_QUESTION === 'true';
+            const operations = process.env.OPERATIONS || 'İşlem yapılmadı';
+            const count = process.env.COUNT || '0';
+            const buildStatus = process.env.BUILD_STATUS || 'Derleme yapılmadı';
+            const projectType = process.env.PROJECT_TYPE || 'general';
+            const projectDetails = process.env.PROJECT_DETAILS || 'Genel';
+            const model = process.env.MODEL || 'deepseek-chat';
+            const complexity = process.env.COMPLEXITY || 'low';
+            const contextFiles = process.env.CONTEXT_FILES || 'Otomatik seçildi';
+            const smartMode = process.env.SMART_MODE === 'true';
+            const question = process.env.QUESTION || '';
+            
+            let statusEmoji = '🔄';
+            if (hasQuestion) statusEmoji = '❓ BEKLEYEN SORU';
+            else if (success) statusEmoji = '✅ BAŞARILI';
+            else statusEmoji = '❌ HATA';
+            
+            let report = '## 🚀 DeepSeek Ultimate - Smart Interactive (GÜNCELLENDİ)\n\n';
+            
+            report += '| Özellik | Değer |\n';
+            report += '|---------|-------|\n';
+            report += '| **Durum** | ' + statusEmoji + ' |\n';
+            report += '| **Model** | ' + model + ' |\n';
+            report += '| **Kompleksite** | ' + complexity + ' |\n';
+            report += '| **Proje Tipı** | ' + projectDetails + ' |\n';
+            report += '| **Context Dosyaları** | ' + contextFiles + ' |\n';
+            report += '| **Akıllı Mod** | ' + (smartMode ? '✅ AÇIK' : '🔧 MANUEL') + ' |\n';
+            report += '| **İşlem Sayısı** | ' + count + ' |\n';
+            report += '| **Derleme** | ' + buildStatus + ' |\n';
+            report += '| **Web Search** | ' + (model === 'deepseek-coder' ? '✅ AKTIF' : '⚠️  DİĞER MODEL') + ' |\n\n';
+            
+            if (hasQuestion) {
+              report += '### ❓ INTERAKTİF SORU\n';
+              report += question + '\n\n';
+              report += '**📋 Sonraki Adımlar:**\n';
+              report += '1. Bu soruyu yanıtla\n';
+              report += '2. Eksik dosyaları \`context_files\` alanına ekle\n';
+              report += '3. Workflow\'u yeniden çalıştır\n\n';
+              report += '**💡 Örnek:**\n```yaml\ncontext_files: "' + contextFiles + ',ek_dosya.kt"\n```\n\n';
+            } else if (operations && operations !== 'İşlem yapılmadı') {
+              report += '### ✅ YAPILAN İŞLEMLER\n' + operations + '\n\n';
+            }
+            
+            if (!success && process.env.ERROR && !hasQuestion) {
+              report += '### ❌ HATA DETAYI\n' + process.env.ERROR + '\n\n';
+            }
+            
+            report += '---\n';
+            report += '**🎯 GÜNCELLEMELER:**\n';
+            report += '1. ✅ **deepseek-coder** entegre edildi (kod görevleri için)\n';
+            report += '2. ✅ **Dosya sınırı kaldırıldı** (daha fazla context)\n';
+            report += '3. ✅ **Web search özelliği** eklendi (araştırma yapabilir)\n';
+            report += '*GitHub Copilot stili interaktif kodlama*';
+            
+            try {
+              if (context.issue && context.issue.number) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: report
+                });
+              } else {
+                core.info(report);
+              }
+            } catch (e) {
+              console.log("Yorum eklenemedi: " + e.message);
+            }

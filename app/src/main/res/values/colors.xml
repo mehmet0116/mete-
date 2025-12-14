@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#FF6B9D</color>
-    <color name="primary_dark">#FF4081</color>
-    <color name="secondary">#4CAF50</color>
-    <color name="secondary_dark">#388E3C</color>
-    <color name="background">#FFF9F9</color>
+    <color name="primary">#FF6B35</color>
+    <color name="primary_dark">#FF5722</color>
+    <color name="secondary">#4ECDC4</color>
+    <color name="tertiary">#FFE66D</color>
+    <color name="background">#F7F9FC</color>
     <color name="surface">#FFFFFF</color>
+    <color name="error">#FF5252</color>
+    <color name="success">#4CAF50</color>
+    <color name="warning">#FFC107</color>
+    
+    <!-- Text Colors -->
     <color name="on_primary">#FFFFFF</color>
-    <color name="on_secondary">#FFFFFF</color>
-    <color name="on_background">#333333</color>
-    <color name="on_surface">#333333</color>
-    <color name="correct_green">#4CAF50</color>
-    <color name="wrong_red">#F44336</color>
-    <color name="neutral_blue">#2196F3</color>
+    <color name="on_secondary">#000000</color>
+    <color name="on_background">#212121</color>
+    <color name="on_surface">#212121</color>
+    
+    <!-- Game Colors -->
+    <color name="game_correct">#4CAF50</color>
+    <color name="game_incorrect">#FF5252</color>
+    <color name="game_neutral">#2196F3</color>
+    <color name="game_disabled">#BDBDBD</color>
+    
+    <!-- Star Colors -->
+    <color name="star_filled">#FFD700</color>
+    <color name="star_empty">#E0E0E0</color>
 </resources>

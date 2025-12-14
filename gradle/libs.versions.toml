@@ -1,51 +1,41 @@
 [versions]
-agp = "8.5.2"
-kotlin = "1.9.24"
-coreKtx = "1.12.0"
-lifecycleRuntimeKtx = "2.7.0"
-activityCompose = "1.8.2"
-composeBom = "2023.10.01"
+androidx-core = "1.12.0"
+androidx-lifecycle = "2.7.0"
+androidx-activity-compose = "1.8.2"
+androidx-compose-bom = "2023.10.01"
+androidx-compose-ui = "1.5.4"
+androidx-compose-material3 = "1.1.2"
+androidx-navigation-compose = "2.7.5"
+androidx-lifecycle-viewmodel-compose = "2.7.0"
+androidx-texttospeech = "1.0.1"
+androidx-media = "1.6.0"
 junit = "4.13.2"
-extJunit = "1.1.5"
-espressoCore = "3.5.1"
-ui = "1.5.4"
-uiGraphics = "1.5.4"
-uiTooling = "1.5.4"
-uiToolingPreview = "1.5.4"
-uiTestJunit4 = "1.5.4"
-uiTestManifest = "1.5.4"
-material3 = "1.1.2"
-navigationCompose = "2.7.5"
-lifecycleViewmodelCompose = "2.7.0"
-texttospeech = "1.0.1"
-media = "1.6.0"
-lottie = "6.3.0"
+androidx-junit = "1.1.5"
+androidx-espresso-core = "3.5.1"
 
 [libraries]
-androidx-texttospeech = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
-androidx-media = { module = "androidx.media:media", version.ref = "media" }
-lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation-compose" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle-viewmodel-compose" }
+androidx-texttospeech = { module = "androidx.texttospeech:texttospeech", version.ref = "androidx-texttospeech" }
+androidx-media = { module = "androidx.media:media", version.ref = "androidx-media" }
 
-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
-ui = { module = "androidx.compose.ui:ui" }
-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
-material3 = { module = "androidx.compose.material3:material3" }
-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycleRuntimeKtx" }
-
+# Testing
 junit = { module = "junit:junit", version.ref = "junit" }
-androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "extJunit" }
-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
+androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-espresso-core" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+android-application = { id = "com.android.application", version = "8.2.0" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "1.9.20" }
+kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version = "1.9.20" }

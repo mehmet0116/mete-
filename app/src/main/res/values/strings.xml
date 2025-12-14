@@ -1,37 +1,51 @@
 <resources>
     <string name="app_name">Mete\'nin Beyin Oyunu</string>
     
-    <!-- Ana ekran -->
-    <string name="welcome_title">Mete Hoşgeldin!</string>
-    <string name="welcome_subtitle">5 yaşındaki çocuklar için eğitici oyunlar</string>
-    <string name="start_game">Oyuna Başla</string>
-    <string name="select_category">Kategori Seç</string>
+    <!-- Welcome Screen -->
+    <string name="welcome_title">Mete\'nin Beyin Oyunu</string>
+    <string name="welcome_subtitle">Hadi birlikte öğrenelim!</string>
+    <string name="start_button">OYNAMAYA BAŞLA</string>
     
-    <!-- Kategoriler -->
-    <string name="category_fruits">Meyveler</string>
+    <!-- Category Selection -->
+    <string name="select_category">Bir Kategori Seç</string>
     <string name="category_animals">Hayvanlar</string>
     <string name="category_numbers">Sayılar</string>
-    <string name="category_colors">Renkler</string>
     <string name="category_shapes">Şekiller</string>
-    <string name="category_vehicles">Araçlar</string>
+    <string name="category_colors">Renkler</string>
+    <string name="category_letters">Harfler</string>
+    <string name="category_fruits">Meyveler</string>
+    <string name="category_vegetables">Sebzeler</string>
+    <string name="category_body_parts">Vücut Bölümleri</string>
+    <string name="category_movements">Hareketler</string>
+    <string name="category_time">Zaman</string>
     
-    <!-- Oyun ekranı -->
+    <!-- Game Screen -->
     <string name="question">Soru</string>
-    <string name="correct_answer">Doğru Cevap!</string>
-    <string name="wrong_answer">Tekrar Dene</string>
-    <string name="next_question">Sonraki Soru</string>
     <string name="score">Puan: %d</string>
-    <string name="game_completed">Oyun Tamamlandı!</string>
-    <string name="play_again">Tekrar Oyna</string>
-    <string name="back_to_home">Ana Menü</string>
+    <string name="next_question">Sonraki Soru</string>
+    <string name="finish_game">Bitir</string>
     
-    <!-- Sesli geri bildirimler -->
-    <string name="voice_welcome">Mete hoşgeldin! Hadi oyun oynayalım!</string>
-    <string name="voice_correct">Bravo Mete! Çok iyi bildin!</string>
-    <string name="voice_encourage">Harikasın Mete! Biraz daha dene!</string>
-    <string name="voice_completed">Tebrikler Mete! Tüm soruları bitirdin!</string>
+    <!-- Results Screen -->
+    <string name="results_title">Oyun Bitti!</string>
+    <string name="final_score">Toplam Puan: %d/%d</string>
+    <string name="play_again">TEKRAR OYNA</string>
+    <string name="select_new_category">YENİ KATEGORİ SEÇ</string>
     
-    <!-- Hata mesajları -->
-    <string name="error_no_tts">Sesli geri bildirim desteklenmiyor</string>
-    <string name="error_loading">Yükleniyor...</string>
+    <!-- Feedback Messages -->
+    <string name="feedback_bravo">Bravo Mete!</string>
+    <string name="feedback_super">Süpersin Mete!</string>
+    <string name="feedback_great">Harikasın Mete!</string>
+    <string name="feedback_try_again">Tekrar deneyelim!</string>
+    <string name="feedback_correct">Doğru!</string>
+    <string name="feedback_incorrect">Yanlış, tekrar deneyelim</string>
+    
+    <!-- Voice Messages -->
+    <string name="voice_welcome">Selam Mete! Hadi birlikte öğrenelim!</string>
+    <string name="voice_bravo">Bravo Mete!</string>
+    <string name="voice_super">Süpersin Mete!</string>
+    
+    <!-- Common -->
+    <string name="back">Geri</string>
+    <string name="loading">Yükleniyor...</string>
+    <string name="error">Bir hata oluştu</string>
 </resources>

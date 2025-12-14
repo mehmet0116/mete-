@@ -2,12 +2,25 @@ package com.mete.braingame.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val PrimaryColor = Color(0xFFFF6B9D)
-val SecondaryColor = Color(0xFF4CAF50)
-val BackgroundColor = Color(0xFFF9F9F9)
-val SurfaceColor = Color.White
-val OnPrimaryColor = Color.White
-val OnBackgroundColor = Color(0xFF333333)
-val CorrectGreen = Color(0xFF4CAF50)
-val WrongRed = Color(0xFFF44336)
-val NeutralBlue = Color(0xFF2196F3)
+val Primary = Color(0xFFFF6B35)
+val PrimaryDark = Color(0xFFFF5722)
+val Secondary = Color(0xFF4ECDC4)
+val Tertiary = Color(0xFFFFE66D)
+val Background = Color(0xFFF7F9FC)
+val Surface = Color(0xFFFFFFFF)
+val Error = Color(0xFFFF5252)
+val Success = Color(0xFF4CAF50)
+val Warning = Color(0xFFFFC107)
+
+val OnPrimary = Color(0xFFFFFFFF)
+val OnSecondary = Color(0xFF000000)
+val OnBackground = Color(0xFF212121)
+val OnSurface = Color(0xFF212121)
+
+val GameCorrect = Color(0xFF4CAF50)
+val GameIncorrect = Color(0xFFFF5252)
+val GameNeutral = Color(0xFF2196F3)
+val GameDisabled = Color(0xFFBDBDBD)
+
+val StarFilled = Color(0xFFFFD700)
+val StarEmpty = Color(0xFFE0E0E0)

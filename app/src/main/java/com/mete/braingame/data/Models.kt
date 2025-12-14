@@ -1,72 +1,59 @@
 package com.mete.braingame.data
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Immutable
 
-// Kategori modeli
+@Immutable
 data class Category(
     val id: Int,
     val name: String,
-    val displayName: String,
-    val color: Color,
-    val icon: String,
-    val description: String,
-    val totalQuestions: Int
+    val iconResId: Int = 0, // For future use with vector icons
+    val color: Long,
+    val description: String = ""
 )
 
-// Soru modeli
+@Immutable
 data class Question(
     val id: Int,
     val categoryId: Int,
     val text: String,
-    val imageRes: String? = null,
-    val soundRes: String? = null,
+    val imageResId: Int = 0, // For future use with drawable resources
     val options: List<String>,
-    val correctAnswer: Int,
-    val explanation: String? = null,
-    val timeLimit: Int = 30,
-    val points: Int = 10
+    val correctAnswer: String,
+    val voicePrompt: String = "",
+    val soundResId: Int = 0 // For animal sounds
 )
 
-// Ekranlar
-sealed class Screen {
-    data object Welcome : Screen()
-    data object CategorySelection : Screen()
-    data class Game(val categoryId: Int) : Screen()
-    data object Results : Screen()
-}
-
-// Oyun durumu
+@Immutable
 data class GameState(
     val currentQuestionIndex: Int = 0,
     val score: Int = 0,
-    val selectedCategory: Category? = null,
-    val isGameActive: Boolean = false,
-    val isGameFinished: Boolean = false,
-    val userAnswers: List<Int> = emptyList(),
-    val showResult: Boolean = false,
-    val lastAnswerCorrect: Boolean? = null,
-    val correctAnswers: Int = 0,
     val totalQuestions: Int = 0,
-    val timeRemaining: Int = 0,
-    val selectedAnswer: Int? = null,
-    val isAnswered: Boolean = false,
-    val feedbackMessage: String = ""
+    val selectedCategory: Category? = null,
+    val isGameCompleted: Boolean = false,
+    val userAnswers: List<UserAnswer> = emptyList()
 )
 
-// Oyun sonucu
-data class GameResult(
-    val score: Int,
-    val correctAnswers: Int,
-    val totalQuestions: Int,
-    val timeSpent: Int,
-    val stars: Int,
-    val feedback: String
-)
-
-// Kullanıcı cevabı
+@Immutable
 data class UserAnswer(
     val questionId: Int,
-    val selectedOption: Int,
+    val selectedAnswer: String,
     val isCorrect: Boolean,
-    val timeTaken: Long
+    val timestamp: Long = System.currentTimeMillis()
 )
+
+sealed class GameEvent {
+    data object StartGame : GameEvent()
+    data class SelectCategory(val category: Category) : GameEvent()
+    data class AnswerQuestion(val answer: String) : GameEvent()
+    data object NextQuestion : GameEvent()
+    data object FinishGame : GameEvent()
+    data object RestartGame : GameEvent()
+    data object NavigateToCategories : GameEvent()
+}
+
+sealed class GameScreen {
+    data object Welcome : GameScreen()
+    data object CategorySelection : GameScreen()
+    data object Game : GameScreen()
+    data object Results : GameScreen()
+}

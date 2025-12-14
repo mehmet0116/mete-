@@ -1,46 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mete\'nin Beyin Oyunu</string>
     
     <!-- Welcome Screen -->
-    <string name="welcome_title">Mete\'ye Hoşgeldin!</string>
-    <string name="welcome_subtitle">Hadi birlikte öğrenelim ve eğlenelim!</string>
-    <string name="start_button">OYUNA BAŞLA</string>
+    <string name="welcome_title">Mete\'nin Beyin Oyunu</string>
+    <string name="welcome_subtitle">Hadi birlikte öğrenelim!</string>
+    <string name="start_button">OYNAMAYA BAŞLA</string>
     
-    <!-- Category Screen -->
-    <string name="select_category">Bir Kategori Seç</string>
-    <string name="animals_category">Hayvanlar</string>
-    <string name="numbers_category">Sayılar</string>
-    <string name="shapes_category">Şekiller</string>
-    <string name="colors_category">Renkler</string>
-    <string name="letters_category">Harfler</string>
-    <string name="fruits_category">Meyveler</string>
-    <string name="vegetables_category">Sebzeler</string>
-    <string name="body_parts_category">Vücut Bölümleri</string>
-    <string name="actions_category">Hareketler</string>
-    <string name="time_category">Zaman</string>
+    <!-- Category Selection -->
+    <string name="select_category">Bir kategori seç</string>
+    <string name="animals">Hayvanlar</string>
+    <string name="numbers">Sayılar</string>
+    <string name="shapes">Şekiller</string>
+    <string name="colors">Renkler</string>
+    <string name="fruits">Meyveler</string>
+    <string name="vegetables">Sebzeler</string>
+    <string name="body_parts">Vücut Bölümleri</string>
+    <string name="actions">Hareketler</string>
+    <string name="time">Zaman</string>
+    <string name="letters">Harfler</string>
     
     <!-- Game Screen -->
     <string name="score">Puan: %d</string>
     <string name="question">Soru: %d/%d</string>
-    <string name="correct_answer">Doğru! 🎉</string>
-    <string name="wrong_answer">Tekrar deneyelim! 💪</string>
+    <string name="correct_answer">Doğru cevap!</string>
+    <string name="wrong_answer">Tekrar deneyelim</string>
     <string name="next_question">SONRAKİ SORU</string>
+    <string name="finish_game">BİTİR</string>
     
     <!-- Results Screen -->
     <string name="results_title">Oyun Bitti!</string>
     <string name="final_score">Toplam Puan: %d</string>
+    <string name="correct_answers">Doğru Cevaplar: %d/%d</string>
     <string name="play_again">TEKRAR OYNA</string>
-    <string name="select_new_category">YENİ KATEGORİ SEÇ</string>
+    <string name="back_to_menu">MENÜYE DÖN</string>
     
-    <!-- Encouraging Messages -->
-    <string name="excellent">Mükemmel Mete! 🌟</string>
-    <string name="great">Harikasın Mete! 🎯</string>
-    <string name="good">Güzel gidiyorsun Mete! 👍</string>
-    <string name="keep_going">Devam et Mete! 💪</string>
+    <!-- Encouragement Messages -->
+    <string name="excellent">Mükemmel! Süpersin Mete!</string>
+    <string name="great">Harika! Çok iyi gidiyorsun!</string>
+    <string name="good">Güzel! Devam et!</string>
+    <string name="keep_trying">Pekala, biraz daha çalışalım!</string>
     
     <!-- Voice Messages -->
     <string name="voice_welcome">Selam Mete! Hadi birlikte öğrenelim!</string>
     <string name="voice_bravo">Bravo Mete!</string>
     <string name="voice_super">Süpersin Mete!</string>
-    <string name="voice_try_again">Tekrar deneyelim Mete!</string>
+    <string name="voice_try_again">Tekrar deneyelim, olacak!</string>
 </resources>

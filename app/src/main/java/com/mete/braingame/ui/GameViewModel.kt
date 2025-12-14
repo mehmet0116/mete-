@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mete.braingame.data.Category
 import com.mete.braingame.data.GameData
-import com.mete.braingame.data.GameEvent
 import com.mete.braingame.data.GameScreen
 import com.mete.braingame.data.GameState
 import com.mete.braingame.data.Question
-import com.mete.braingame.data.UserAnswer
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,129 +17,136 @@ class GameViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(GameState())
     val uiState: StateFlow<GameState> = _uiState.asStateFlow()
 
-    private val _currentScreen = MutableStateFlow<GameScreen>(GameScreen.Welcome)
+    private val _currentScreen = MutableStateFlow(GameScreen.WELCOME)
     val currentScreen: StateFlow<GameScreen> = _currentScreen.asStateFlow()
 
     private var currentQuestions: List<Question> = emptyList()
 
-    fun handleEvent(event: GameEvent) {
-        when (event) {
-            is GameEvent.StartGame -> {
-                _currentScreen.value = GameScreen.CategorySelection
-            }
-
-            is GameEvent.SelectCategory -> {
-                startGameWithCategory(event.category)
-            }
-
-            is GameEvent.AnswerQuestion -> {
-                handleAnswer(event.answer)
-            }
-
-            is GameEvent.NextQuestion -> {
-                nextQuestion()
-            }
-
-            is GameEvent.FinishGame -> {
-                finishGame()
-            }
-
-            is GameEvent.RestartGame -> {
-                restartGame()
-            }
-
-            is GameEvent.NavigateToCategories -> {
-                _currentScreen.value = GameScreen.CategorySelection
-                _uiState.value = GameState()
-            }
-        }
+    fun navigateTo(screen: GameScreen) {
+        _currentScreen.value = screen
     }
 
-    private fun startGameWithCategory(category: Category) {
+    fun selectCategory(category: Category) {
         viewModelScope.launch {
-            currentQuestions = GameData.getQuestionsForCategory(category.id)
+            currentQuestions = GameData.getQuestionsForCategory(category.id).shuffled().take(5)
             
             _uiState.update { state ->
                 state.copy(
-                    selectedCategory = category,
+                    currentCategory = category,
                     currentQuestionIndex = 0,
                     score = 0,
+                    correctAnswers = 0,
                     totalQuestions = currentQuestions.size,
-                    isGameCompleted = false,
-                    userAnswers = emptyList()
+                    isGameActive = true,
+                    isGameFinished = false,
+                    selectedAnswer = null,
+                    isAnswerCorrect = null
                 )
             }
             
-            _currentScreen.value = GameScreen.Game
+            navigateTo(GameScreen.GAME)
         }
     }
 
-    private fun handleAnswer(answer: String) {
-        val currentState = _uiState.value
-        val currentQuestion = currentQuestions.getOrNull(currentState.currentQuestionIndex) ?: return
-        
-        val isCorrect = answer == currentQuestion.correctAnswer
-        val newScore = if (isCorrect) currentState.score + 1 else currentState.score
-        
-        val userAnswer = UserAnswer(
-            questionId = currentQuestion.id,
-            selectedAnswer = answer,
-            isCorrect = isCorrect
-        )
+    fun selectAnswer(answerIndex: Int) {
+        val currentQuestion = getCurrentQuestion() ?: return
         
         _uiState.update { state ->
+            val isCorrect = answerIndex == currentQuestion.correctAnswer
+            val newScore = state.score + if (isCorrect) 10 else 0
+            val newCorrectAnswers = state.correctAnswers + if (isCorrect) 1 else 0
+            
             state.copy(
+                selectedAnswer = answerIndex,
+                isAnswerCorrect = isCorrect,
                 score = newScore,
-                userAnswers = state.userAnswers + userAnswer
+                correctAnswers = newCorrectAnswers
             )
         }
     }
 
-    private fun nextQuestion() {
-        val currentState = _uiState.value
-        val nextIndex = currentState.currentQuestionIndex + 1
-        
-        if (nextIndex >= currentState.totalQuestions) {
-            finishGame()
-        } else {
-            _uiState.update { state ->
-                state.copy(currentQuestionIndex = nextIndex)
+    fun nextQuestion() {
+        _uiState.update { state ->
+            val nextIndex = state.currentQuestionIndex + 1
+            
+            if (nextIndex >= state.totalQuestions) {
+                state.copy(
+                    isGameFinished = true,
+                    isGameActive = false
+                ).also {
+                    navigateTo(GameScreen.RESULTS)
+                }
+            } else {
+                state.copy(
+                    currentQuestionIndex = nextIndex,
+                    selectedAnswer = null,
+                    isAnswerCorrect = null
+                )
             }
         }
     }
 
-    private fun finishGame() {
+    fun finishGame() {
         _uiState.update { state ->
-            state.copy(isGameCompleted = true)
+            state.copy(
+                isGameFinished = true,
+                isGameActive = false
+            )
         }
-        _currentScreen.value = GameScreen.Results
+        navigateTo(GameScreen.RESULTS)
     }
 
-    private fun restartGame() {
-        val currentCategory = _uiState.value.selectedCategory
-        if (currentCategory != null) {
-            startGameWithCategory(currentCategory)
-        } else {
-            _currentScreen.value = GameScreen.CategorySelection
-            _uiState.value = GameState()
+    fun restartGame() {
+        _uiState.update { state ->
+            state.copy(
+                currentQuestionIndex = 0,
+                score = 0,
+                correctAnswers = 0,
+                isGameActive = true,
+                isGameFinished = false,
+                selectedAnswer = null,
+                isAnswerCorrect = null
+            )
         }
+        navigateTo(GameScreen.GAME)
+    }
+
+    fun resetToMenu() {
+        _uiState.update { GameState() }
+        navigateTo(GameScreen.CATEGORY_SELECTION)
     }
 
     fun getCurrentQuestion(): Question? {
-        return currentQuestions.getOrNull(_uiState.value.currentQuestionIndex)
+        val state = _uiState.value
+        return if (state.currentQuestionIndex < currentQuestions.size) {
+            currentQuestions[state.currentQuestionIndex]
+        } else {
+            null
+        }
+    }
+
+    fun getEncouragementMessage(): String {
+        val percentage = if (_uiState.value.totalQuestions > 0) {
+            _uiState.value.correctAnswers.toFloat() / _uiState.value.totalQuestions
+        } else 0f
+        
+        return when {
+            percentage >= 0.9f -> "Mükemmel! Süpersin Mete!"
+            percentage >= 0.7f -> "Harika! Çok iyi gidiyorsun!"
+            percentage >= 0.5f -> "Güzel! Devam et!"
+            else -> "Pekala, biraz daha çalışalım!"
+        }
     }
 
     fun getStarRating(): Int {
-        val state = _uiState.value
-        if (state.totalQuestions == 0) return 0
-        
-        val percentage = state.score.toFloat() / state.totalQuestions.toFloat()
+        val percentage = if (_uiState.value.totalQuestions > 0) {
+            _uiState.value.correctAnswers.toFloat() / _uiState.value.totalQuestions
+        } else 0f
         
         return when {
-            percentage >= 0.9f -> 3
-            percentage >= 0.7f -> 2
-            percentage >= 0.5f -> 1
-            else -> 0
+            percentage >= 0.8f -> 3
+            percentage >= 0.6f -> 2
+            else -> 1
         }
     }
 }

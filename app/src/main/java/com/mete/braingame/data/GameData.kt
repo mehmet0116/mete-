@@ -4,63 +4,93 @@ object GameData {
     val categories = listOf(
         Category(
             id = 1,
-            name = "Hayvanlar",
-            color = 0xFFFF6B35,
-            description = "25 hayvan - gerçek seslerle!"
+            name = "animals",
+            displayName = "Hayvanlar",
+            colorRes = "category_animals",
+            iconRes = "🐯",
+            description = "25 hayvan ve gerçek sesleri",
+            totalQuestions = 10
         ),
         Category(
             id = 2,
-            name = "Sayılar",
-            color = 0xFF4ECDC4,
-            description = "16 sayı - 1'den 20'ye"
+            name = "numbers",
+            displayName = "Sayılar",
+            colorRes = "category_numbers",
+            iconRes = "🔢",
+            description = "1'den 20'ye kadar sayılar",
+            totalQuestions = 10
         ),
         Category(
             id = 3,
-            name = "Şekiller",
-            color = 0xFFFFE66D,
-            description = "10 şekil"
+            name = "shapes",
+            displayName = "Şekiller",
+            colorRes = "category_shapes",
+            iconRes = "⭐",
+            description = "10 farklı şekil",
+            totalQuestions = 8
         ),
         Category(
             id = 4,
-            name = "Renkler",
-            color = 0xFF9C27B0,
-            description = "12 renk"
+            name = "colors",
+            displayName = "Renkler",
+            colorRes = "category_colors",
+            iconRes = "🎨",
+            description = "12 temel renk",
+            totalQuestions = 8
         ),
         Category(
             id = 5,
-            name = "Harfler",
-            color = 0xFF2196F3,
-            description = "16 harf"
+            name = "fruits",
+            displayName = "Meyveler",
+            colorRes = "category_fruits",
+            iconRes = "🍎",
+            description = "14 lezzetli meyve",
+            totalQuestions = 8
         ),
         Category(
             id = 6,
-            name = "Meyveler",
-            color = 0xFF4CAF50,
-            description = "14 meyve"
+            name = "vegetables",
+            displayName = "Sebzeler",
+            colorRes = "category_vegetables",
+            iconRes = "🥕",
+            description = "12 sağlıklı sebze",
+            totalQuestions = 8
         ),
         Category(
             id = 7,
-            name = "Sebzeler",
-            color = 0xFF8BC34A,
-            description = "12 sebze"
+            name = "body_parts",
+            displayName = "Vücut Bölümleri",
+            colorRes = "category_animals", // Reuse color
+            iconRes = "👁️",
+            description = "12 vücut bölümü",
+            totalQuestions = 8
         ),
         Category(
             id = 8,
-            name = "Vücut Bölümleri",
-            color = 0xFFFF9800,
-            description = "12 organ"
+            name = "actions",
+            displayName = "Hareketler",
+            colorRes = "category_numbers", // Reuse color
+            iconRes = "🏃",
+            description = "12 temel hareket",
+            totalQuestions = 8
         ),
         Category(
             id = 9,
-            name = "Hareketler",
-            color = 0xFF00BCD4,
-            description = "12 hareket"
+            name = "time",
+            displayName = "Zaman",
+            colorRes = "category_shapes", // Reuse color
+            iconRes = "📅",
+            description = "11 zaman kavramı",
+            totalQuestions = 8
         ),
         Category(
             id = 10,
-            name = "Zaman",
-            color = 0xFF795548,
-            description = "11 kavram"
+            name = "letters",
+            displayName = "Harfler",
+            colorRes = "category_colors", // Reuse color
+            iconRes = "📝",
+            description = "16 temel harf",
+            totalQuestions = 8
         )
     )
 
@@ -70,149 +100,143 @@ object GameData {
             2 -> numberQuestions
             3 -> shapeQuestions
             4 -> colorQuestions
-            5 -> letterQuestions
-            6 -> fruitQuestions
-            7 -> vegetableQuestions
-            8 -> bodyPartQuestions
-            9 -> movementQuestions
-            10 -> timeQuestions
+            5 -> fruitQuestions
+            6 -> vegetableQuestions
+            7 -> bodyPartQuestions
+            8 -> actionQuestions
+            9 -> timeQuestions
+            10 -> letterQuestions
             else -> emptyList()
         }
     }
 
-    private val animalQuestions = listOf(
+    private val animalQuestions = List(10) { index ->
         Question(
-            id = 101,
+            id = index + 1,
             categoryId = 1,
-            text = "Hangisi aslan?",
-            options = listOf("Köpek", "Aslan", "Kedi", "Kuş"),
-            correctAnswer = "Aslan",
-            voicePrompt = "Hangisi aslan?"
-        ),
-        Question(
-            id = 102,
-            categoryId = 1,
-            text = "Hangisi fil?",
-            options = listOf("Fil", "Zürafa", "Maymun", "Ayı"),
-            correctAnswer = "Fil",
-            voicePrompt = "Hangisi fil?"
+            text = "Bu hayvanın adı nedir?",
+            imageRes = "animal_${index + 1}",
+            soundRes = "sound_animal_${index + 1}",
+            options = listOf("Aslan", "Kaplan", "Fil", "Zürafa", "Maymun", "Köpek", "Kedi", "Kuş").shuffled(),
+            correctAnswer = 0,
+            explanation = "Bu bir aslan, ormanların kralı!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val numberQuestions = listOf(
+    private val numberQuestions = List(10) { index ->
+        val number = index + 1
         Question(
-            id = 201,
+            id = index + 11,
             categoryId = 2,
-            text = "Kaç tane elma var?",
-            options = listOf("1", "2", "3", "4"),
-            correctAnswer = "3",
-            voicePrompt = "Kaç tane elma var?"
-        ),
-        Question(
-            id = 202,
-            categoryId = 2,
-            text = "Hangisi 5 sayısı?",
-            options = listOf("3", "5", "7", "9"),
-            correctAnswer = "5",
-            voicePrompt = "Hangisi beş sayısı?"
+            text = "Kaç tane nesne var?",
+            imageRes = "number_$number",
+            options = List(4) { (it + 1).toString() },
+            correctAnswer = 0,
+            explanation = "Doğru! $number tane var."
         )
-        // Add more questions...
-    )
+    }
 
-    private val shapeQuestions = listOf(
+    private val shapeQuestions = List(8) { index ->
+        val shapes = listOf("Daire", "Kare", "Üçgen", "Dikdörtgen", "Yıldız", "Kalp", "Oval", "Altıgen")
         Question(
-            id = 301,
+            id = index + 21,
             categoryId = 3,
-            text = "Hangisi daire?",
-            options = listOf("Kare", "Üçgen", "Daire", "Dikdörtgen"),
-            correctAnswer = "Daire",
-            voicePrompt = "Hangisi daire?"
+            text = "Bu şeklin adı nedir?",
+            imageRes = "shape_${index + 1}",
+            options = shapes.shuffled(),
+            correctAnswer = shapes.indexOf(shapes[index]),
+            explanation = "Evet, bu bir ${shapes[index].lowercase()}!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val colorQuestions = listOf(
+    private val colorQuestions = List(8) { index ->
+        val colors = listOf("Kırmızı", "Mavi", "Yeşil", "Sarı", "Turuncu", "Mor", "Pembe", "Kahverengi")
         Question(
-            id = 401,
+            id = index + 31,
             categoryId = 4,
-            text = "Hangisi kırmızı?",
-            options = listOf("Mavi", "Yeşil", "Kırmızı", "Sarı"),
-            correctAnswer = "Kırmızı",
-            voicePrompt = "Hangisi kırmızı?"
+            text = "Bu rengin adı nedir?",
+            imageRes = "color_${index + 1}",
+            options = colors.shuffled(),
+            correctAnswer = colors.indexOf(colors[index]),
+            explanation = "Doğru! Bu renk ${colors[index].lowercase()}."
         )
-        // Add more questions...
-    )
+    }
 
-    private val letterQuestions = listOf(
+    private val fruitQuestions = List(8) { index ->
+        val fruits = listOf("Elma", "Muz", "Çilek", "Portakal", "Üzüm", "Karpuz", "Kiraz", "Şeftali")
         Question(
-            id = 501,
+            id = index + 41,
             categoryId = 5,
-            text = "Hangisi A harfi?",
-            options = listOf("A", "B", "C", "D"),
-            correctAnswer = "A",
-            voicePrompt = "Hangisi A harfi?"
+            text = "Bu meyvenin adı nedir?",
+            imageRes = "fruit_${index + 1}",
+            options = fruits.shuffled(),
+            correctAnswer = fruits.indexOf(fruits[index]),
+            explanation = "Lezzetli bir ${fruits[index].lowercase()}!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val fruitQuestions = listOf(
+    private val vegetableQuestions = List(8) { index ->
+        val vegetables = listOf("Havuç", "Domates", "Salatalık", "Patates", "Soğan", "Biber", "Ispanak", "Brokoli")
         Question(
-            id = 601,
+            id = index + 51,
             categoryId = 6,
-            text = "Hangisi elma?",
-            options = listOf("Elma", "Muz", "Portakal", "Çilek"),
-            correctAnswer = "Elma",
-            voicePrompt = "Hangisi elma?"
+            text = "Bu sebzenin adı nedir?",
+            imageRes = "vegetable_${index + 1}",
+            options = vegetables.shuffled(),
+            correctAnswer = vegetables.indexOf(vegetables[index]),
+            explanation = "Sağlıklı bir ${vegetables[index].lowercase()}!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val vegetableQuestions = listOf(
+    private val bodyPartQuestions = List(8) { index ->
+        val bodyParts = listOf("Göz", "Burun", "Ağız", "Kulak", "El", "Ayak", "Baş", "Parmak")
         Question(
-            id = 701,
+            id = index + 61,
             categoryId = 7,
-            text = "Hangisi havuç?",
-            options = listOf("Havuç", "Patates", "Domates", "Salatalık"),
-            correctAnswer = "Havuç",
-            voicePrompt = "Hangisi havuç?"
+            text = "Bu vücut bölümünün adı nedir?",
+            imageRes = "body_${index + 1}",
+            options = bodyParts.shuffled(),
+            correctAnswer = bodyParts.indexOf(bodyParts[index]),
+            explanation = "Evet, bu bir ${bodyParts[index].lowercase()}!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val bodyPartQuestions = listOf(
+    private val actionQuestions = List(8) { index ->
+        val actions = listOf("Koş", "Zıpla", "Yürü", "Otur", "Kalk", "El salla", "Dans et", "Gül")
         Question(
-            id = 801,
+            id = index + 71,
             categoryId = 8,
-            text = "Hangisi göz?",
-            options = listOf("Göz", "Kulak", "Burun", "Ağız"),
-            correctAnswer = "Göz",
-            voicePrompt = "Hangisi göz?"
+            text = "Bu hareketin adı nedir?",
+            imageRes = "action_${index + 1}",
+            options = actions.shuffled(),
+            correctAnswer = actions.indexOf(actions[index]),
+            explanation = "Harika! ${actions[index]} hareketi!"
         )
-        // Add more questions...
-    )
+    }
 
-    private val movementQuestions = listOf(
+    private val timeQuestions = List(8) { index ->
+        val times = listOf("Sabah", "Öğle", "Akşam", "Gece", "Bugün", "Yarın", "Dün", "Hafta")
         Question(
-            id = 901,
+            id = index + 81,
             categoryId = 9,
-            text = "Hangisi zıplamak?",
-            options = listOf("Koşmak", "Zıplamak", "Yürümek", "Yüzmek"),
-            correctAnswer = "Zıplamak",
-            voicePrompt = "Hangisi zıplamak?"
+            text = "Bu zaman kavramının adı nedir?",
+            imageRes = "time_${index + 1}",
+            options = times.shuffled(),
+            correctAnswer = times.indexOf(times[index]),
+            explanation = "Doğru! Bu zaman ${times[index].lowercase()}."
         )
-        // Add more questions...
-    )
+    }
 
-    private val timeQuestions = listOf(
+    private val letterQuestions = List(8) { index ->
+        val letters = listOf("A", "B", "C", "D", "E", "F", "G", "H")
         Question(
-            id = 1001,
+            id = index + 91,
             categoryId = 10,
-            text = "Hangisi sabah?",
-            options = listOf("Sabah", "Öğle", "Akşam", "Gece"),
-            correctAnswer = "Sabah",
-            voicePrompt = "Hangisi sabah?"
+            text = "Bu harfin adı nedir?",
+            imageRes = "letter_${index + 1}",
+            options = letters.shuffled(),
+            correctAnswer = letters.indexOf(letters[index]),
+            explanation = "Harika! Bu ${letters[index]} harfi!"
         )
-        // Add more questions...
-    )
+    }
 }

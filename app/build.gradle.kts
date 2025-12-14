@@ -31,8 +31,8 @@ android {
             )
         }
         debug {
+            isMinifyEnabled = false
             isDebuggable = true
-            applicationIdSuffix = ".debug"
         }
     }
 
@@ -73,11 +73,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     
-    // Text-to-Speech
-    implementation(libs.androidx.texttospeech)
-    
-    // SoundPool for animal sounds
+    // Voice and Audio
     implementation(libs.androidx.media)
+    
+    // Performance monitoring
+    implementation(libs.androidx.profileinstaller)
     
     // Testing
     testImplementation(libs.junit)

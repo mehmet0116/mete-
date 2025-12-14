@@ -181,15 +181,132 @@ object GameData {
         )
     )
 
+    // Meyveler kategorisi soruları
+    val fruitQuestions = listOf(
+        Question(
+            id = 601,
+            categoryId = 6,
+            text = "Hangi meyve kırmızı renklidir? 🍎",
+            options = listOf("Muz", "Elma", "Portakal", "Üzüm"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 602,
+            categoryId = 6,
+            text = "Hangi meyve sarı renklidir ve maymunlar sever? 🍌",
+            options = listOf("Muz", "Kiraz", "Çilek", "Kavun"),
+            correctAnswer = 0
+        ),
+        Question(
+            id = 603,
+            categoryId = 6,
+            text = "Hangi meyve büyük ve yeşil renklidir? 🍉",
+            options = listOf("Kiraz", "Karpuz", "Üzüm", "Limon"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 604,
+            categoryId = 6,
+            text = "Hangi meyve küçük ve kırmızı renklidir? 🍒",
+            options = listOf("Kiraz", "Elma", "Armut", "Kavun"),
+            correctAnswer = 0
+        ),
+        Question(
+            id = 605,
+            categoryId = 6,
+            text = "Hangi meyve portakal renklidir? 🍊",
+            options = listOf("Muz", "Portakal", "Üzüm", "Çilek"),
+            correctAnswer = 1
+        )
+    )
+
+    // Renkler kategorisi soruları
+    val colorQuestions = listOf(
+        Question(
+            id = 401,
+            categoryId = 4,
+            text = "Elmanın rengi nedir? 🍎",
+            options = listOf("Yeşil", "Kırmızı", "Mavi", "Sarı"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 402,
+            categoryId = 4,
+            text = "Güneşin rengi nedir? ☀️",
+            options = listOf("Mavi", "Yeşil", "Sarı", "Kırmızı"),
+            correctAnswer = 2
+        ),
+        Question(
+            id = 403,
+            categoryId = 4,
+            text = "Gökyüzünün rengi nedir? ☁️",
+            options = listOf("Mavi", "Yeşil", "Sarı", "Pembe"),
+            correctAnswer = 0
+        ),
+        Question(
+            id = 404,
+            categoryId = 4,
+            text = "Çimenin rengi nedir? 🌱",
+            options = listOf("Mavi", "Yeşil", "Kırmızı", "Sarı"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 405,
+            categoryId = 4,
+            text = "Hangi renk portakal ve sarının karışımıdır? 🟠",
+            options = listOf("Mor", "Yeşil", "Turuncu", "Pembe"),
+            correctAnswer = 2
+        )
+    )
+
+    // Şekiller kategorisi soruları
+    val shapeQuestions = listOf(
+        Question(
+            id = 301,
+            categoryId = 3,
+            text = "Topun şekli nedir? ⚽",
+            options = listOf("Kare", "Daire", "Üçgen", "Yıldız"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 302,
+            categoryId = 3,
+            text = "Kaç köşesi vardır üçgenin? 🔺",
+            options = listOf("2", "3", "4", "5"),
+            correctAnswer = 1
+        ),
+        Question(
+            id = 303,
+            categoryId = 3,
+            text = "Kaç kenarı vardır karenin? ⬛",
+            options = listOf("2", "3", "4", "5"),
+            correctAnswer = 2
+        ),
+        Question(
+            id = 304,
+            categoryId = 3,
+            text = "Hangi şekil gökyüzünde parlar? ⭐",
+            options = listOf("Kare", "Daire", "Yıldız", "Üçgen"),
+            correctAnswer = 2
+        ),
+        Question(
+            id = 305,
+            categoryId = 3,
+            text = "Sevginin şekli nedir? ❤️",
+            options = listOf("Yıldız", "Kalp", "Kare", "Daire"),
+            correctAnswer = 1
+        )
+    )
+
     // Tüm soruları birleştiren fonksiyon
     fun getQuestionsForCategory(categoryId: Int): List<Question> {
         return when (categoryId) {
             1 -> animalQuestions
             2 -> numberQuestions
-            3 -> listOf() // Şekiller soruları
-            4 -> listOf() // Renkler soruları
+            3 -> shapeQuestions
+            4 -> colorQuestions
             5 -> listOf() // Harfler soruları
-            6 -> listOf() // Meyveler soruları
+            6 -> fruitQuestions
             7 -> listOf() // Sebzeler soruları
             8 -> listOf() // Vücut bölümleri soruları
             9 -> listOf() // Hareketler soruları

@@ -1,5 +1,11 @@
 name: DeepSeek Ultimate - Smart Interactive (Güncellendi)
 
+# İZİNLERİ EKLEYİN - BU KISIM ÇOK ÖNEMLİ!
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -39,6 +45,8 @@ jobs:
           git config --global user.email "${GIT_COMMITTER_EMAIL}"
           git config --global pull.rebase false
           git config --global push.autoSetupRemote true
+          # Token ile authentication ekleyin
+          git config --global http.https://github.com/.extraheader "AUTHORIZATION: bearer ${{ secrets.GITHUB_TOKEN }}"
 
       - name: Senkronizasyon
         run: |
@@ -735,11 +743,22 @@ jobs:
 
       - name: Değişiklikleri Gönder
         if: env.HAS_CHANGES == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "Değişiklikler gönderiliyor..."
+          
+          # Remote URL'i token ile güncelle
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")
-          git pull origin "$CURRENT_BRANCH" --no-edit || true
+          echo "Mevcut dal: $CURRENT_BRANCH"
+          
+          # Pull yap (merge conflict olursa önlem al)
+          git pull origin "$CURRENT_BRANCH" --no-edit --no-rebase || echo "Pull sırasında hata, devam ediliyor..."
+          
+          # Push yap
           git push origin "$CURRENT_BRANCH"
           echo "Push başarılı!"
 
@@ -787,7 +806,7 @@ jobs:
             report += '| **Durum** | ' + statusEmoji + ' |\n';
             report += '| **Model** | ' + model + ' |\n';
             report += '| **Kompleksite** | ' + complexity + ' |\n';
-            report += '| **Proje Tipi** | ' + projectDetails + ' |\n';
+            report += '| **Proje Tipı** | ' + projectDetails + ' |\n';
             report += '| **Context Dosyaları** | ' + contextFiles + ' |\n';
             report += '| **Akıllı Mod** | ' + (smartMode ? '✅ AÇIK' : '🔧 MANUEL') + ' |\n';
             report += '| **İşlem Sayısı** | ' + count + ' |\n';

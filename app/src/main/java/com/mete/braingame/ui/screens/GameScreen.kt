@@ -3,6 +3,7 @@ package com.mete.braingame.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -15,9 +16,9 @@ fun GameScreen(
     viewModel: GameViewModel,
     onGameComplete: (Int) -> Unit
 ) {
-    val currentQuestion = viewModel.currentQuestion.value
-    val gameState = viewModel.gameState.value
-    
+    val gameState = viewModel.gameState.collectAsState().value
+    val currentQuestion = viewModel.getCurrentQuestion()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -67,13 +68,20 @@ fun GameScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        currentQuestion.options.forEach { option ->
+                        currentQuestion.options.forEachIndexed { index, option ->
                             Button(
                                 onClick = {
-                                    val isCorrect = option == currentQuestion.correctAnswer
-                                    viewModel.answerQuestion(isCorrect)
-                                    if (gameState.currentQuestionIndex == gameState.totalQuestions - 1) {
-                                        onGameComplete(gameState.score + if (isCorrect) 1 else 0)
+                                    // Seçim yap
+                                    viewModel.selectAnswer(index)
+
+                                    // Son soruda mıyız?
+                                    val isLast = gameState.currentQuestionIndex >= gameState.totalQuestions - 1
+                                    if (isLast) {
+                                        // Oyun tamamlandı
+                                        onGameComplete(viewModel.gameState.value.score)
+                                    } else {
+                                        // Sonraki soruya geç
+                                        viewModel.nextQuestion()
                                     }
                                 },
                                 modifier = Modifier.fillMaxWidth()

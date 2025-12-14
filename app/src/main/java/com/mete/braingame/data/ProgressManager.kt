@@ -2,11 +2,16 @@ package com.mete.braingame.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+// Explicit imports for data models (same package, but keeps IDE happy)
+import com.mete.braingame.data.UserProgress
+import com.mete.braingame.data.CategoryProgress
+import com.mete.braingame.data.Achievement
 
 /**
  * Manages user progress and achievements using SharedPreferences
@@ -14,8 +19,7 @@ import java.util.Locale
 class ProgressManager(context: Context) {
     private val prefs: SharedPreferences = 
         context.getSharedPreferences("mete_brain_game_progress", Context.MODE_PRIVATE)
-    private val gson = Gson()
-    
+
     companion object {
         private const val KEY_TOTAL_SCORE = "total_score"
         private const val KEY_TOTAL_QUESTIONS = "total_questions"
@@ -88,7 +92,7 @@ class ProgressManager(context: Context) {
         correctAnswers: Int,
         newMasteredWords: Set<String>
     ) {
-        val progressMap = getCategoryProgressMap().toMutableMap()
+        val progressMap: MutableMap<String, CategoryProgress> = getCategoryProgressMap().toMutableMap()
         val currentProgress = progressMap[categoryId] ?: CategoryProgress(categoryId)
         
         val masteredWords = getMasteredWords(categoryId).toMutableSet()
@@ -119,16 +123,48 @@ class ProgressManager(context: Context) {
      */
     private fun getCategoryProgressMap(): Map<String, CategoryProgress> {
         val json = prefs.getString(KEY_CATEGORY_PROGRESS, null) ?: return emptyMap()
-        val type = object : TypeToken<Map<String, CategoryProgress>>() {}.type
-        return gson.fromJson(json, type)
+        val obj = JSONObject(json)
+        val result: MutableMap<String, CategoryProgress> = mutableMapOf()
+        val keys = obj.keys()
+        while (keys.hasNext()) {
+            val key = keys.next()
+            val item = obj.optJSONObject(key) ?: continue
+            val categoryProgress = CategoryProgress(
+                categoryId = item.optString("categoryId", key),
+                totalQuestions = item.optInt("totalQuestions", 0),
+                completedQuestions = item.optInt("completedQuestions", 0),
+                correctAnswers = item.optInt("correctAnswers", 0),
+                masteredWords = item.optJSONArray("masteredWords")?.let { arr ->
+                    val set = mutableSetOf<String>()
+                    for (i in 0 until arr.length()) {
+                        set.add(arr.optString(i))
+                    }
+                    set.toSet()
+                } ?: emptySet(),
+                lastPlayedTime = item.optLong("lastPlayedTime", 0L)
+            )
+            result[key] = categoryProgress
+        }
+        return result.toMap()
     }
     
     /**
      * Save category progress map
      */
     private fun saveCategoryProgressMap(progressMap: Map<String, CategoryProgress>) {
-        val json = gson.toJson(progressMap)
-        prefs.edit().putString(KEY_CATEGORY_PROGRESS, json).apply()
+        val obj = JSONObject()
+        progressMap.forEach { (key, value) ->
+            val item = JSONObject().apply {
+                put("categoryId", value.categoryId)
+                put("totalQuestions", value.totalQuestions)
+                put("completedQuestions", value.completedQuestions)
+                put("correctAnswers", value.correctAnswers)
+                put("masteredWords", JSONArray(value.masteredWords.toList()))
+                put("lastPlayedTime", value.lastPlayedTime)
+            }
+            obj.put(key, item)
+        }
+        prefs.edit().putString(KEY_CATEGORY_PROGRESS, obj.toString()).apply()
     }
     
     /**
@@ -136,16 +172,24 @@ class ProgressManager(context: Context) {
      */
     private fun getMasteredWords(categoryId: String): Set<String> {
         val json = prefs.getString(KEY_MASTERED_WORDS + categoryId, null) ?: return emptySet()
-        val type = object : TypeToken<Set<String>>() {}.type
-        return gson.fromJson(json, type)
+        return try {
+            val arr = JSONArray(json)
+            val set = mutableSetOf<String>()
+            for (i in 0 until arr.length()) {
+                set.add(arr.optString(i))
+            }
+            set.toSet()
+        } catch (_: Exception) {
+            emptySet()
+        }
     }
     
     /**
      * Save mastered words for a category
      */
     private fun saveMasteredWords(categoryId: String, words: Set<String>) {
-        val json = gson.toJson(words)
-        prefs.edit().putString(KEY_MASTERED_WORDS + categoryId, json).apply()
+        val arr = JSONArray(words.toList())
+        prefs.edit().putString(KEY_MASTERED_WORDS + categoryId, arr.toString()).apply()
     }
     
     /**
@@ -193,7 +237,7 @@ class ProgressManager(context: Context) {
             
             dateCalendar.get(java.util.Calendar.YEAR) == yesterday.get(java.util.Calendar.YEAR) &&
                     dateCalendar.get(java.util.Calendar.DAY_OF_YEAR) == yesterday.get(java.util.Calendar.DAY_OF_YEAR)
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             false
         }
     }
@@ -202,12 +246,27 @@ class ProgressManager(context: Context) {
      * Get all achievements
      */
     private fun getAchievements(): List<Achievement> {
-        val json = prefs.getString(KEY_ACHIEVEMENTS, null)
-        if (json != null) {
-            val type = object : TypeToken<List<Achievement>>() {}.type
-            return gson.fromJson(json, type)
+        val json = prefs.getString(KEY_ACHIEVEMENTS, null) ?: return initializeAchievements()
+        return try {
+            val arr = JSONArray(json)
+            val list = mutableListOf<Achievement>()
+            for (i in 0 until arr.length()) {
+                val obj = arr.optJSONObject(i) ?: continue
+                list.add(
+                    Achievement(
+                        id = obj.optString("id"),
+                        title = obj.optString("title"),
+                        description = obj.optString("description"),
+                        emoji = obj.optString("emoji"),
+                        isUnlocked = obj.optBoolean("isUnlocked", false),
+                        unlockedDate = if (obj.has("unlockedDate")) obj.optLong("unlockedDate") else null
+                    )
+                )
+            }
+            list.toList()
+        } catch (_: Exception) {
+            initializeAchievements()
         }
-        return initializeAchievements()
     }
     
     /**
@@ -269,8 +328,19 @@ class ProgressManager(context: Context) {
         }
         
         if (updated) {
-            val json = gson.toJson(achievements)
-            prefs.edit().putString(KEY_ACHIEVEMENTS, json).apply()
+            val arr = JSONArray()
+            achievements.forEach { a ->
+                val obj = JSONObject().apply {
+                    put("id", a.id)
+                    put("title", a.title)
+                    put("description", a.description)
+                    put("emoji", a.emoji)
+                    put("isUnlocked", a.isUnlocked)
+                    if (a.unlockedDate != null) put("unlockedDate", a.unlockedDate)
+                }
+                arr.put(obj)
+            }
+            prefs.edit().putString(KEY_ACHIEVEMENTS, arr.toString()).apply()
         }
     }
     

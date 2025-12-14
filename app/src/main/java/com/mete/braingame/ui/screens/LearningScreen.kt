@@ -5,8 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,13 +12,12 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -58,12 +55,12 @@ fun LearningScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(BackgroundColor)
     ) {
         // Header
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = Surface,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 4.dp
         ) {
             Row(
@@ -75,9 +72,9 @@ fun LearningScreen(
             ) {
                 IconButton(onClick = onBack) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Geri",
-                        tint = Primary
+                        tint = MaterialTheme.colorScheme.primary
                     )
                 }
                 
@@ -87,20 +84,20 @@ fun LearningScreen(
                     Text(
                         text = "Öğrenelim! 📚",
                         style = MaterialTheme.typography.titleLarge,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = categoryName,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                     )
                 }
                 
                 // Progress indicator
                 Surface(
                     shape = CircleShape,
-                    color = Secondary.copy(alpha = 0.1f),
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f),
                     modifier = Modifier.size(56.dp)
                 ) {
                     Column(
@@ -112,7 +109,7 @@ fun LearningScreen(
                         Text(
                             text = "${currentPage + 1}/$totalPages",
                             style = MaterialTheme.typography.bodySmall,
-                            color = Secondary,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -136,7 +133,7 @@ fun LearningScreen(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = Surface),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
                     Column(
@@ -146,7 +143,7 @@ fun LearningScreen(
                         Text(
                             text = "Hadi birlikte öğrenelim $childName! 🌟",
                             style = MaterialTheme.typography.headlineSmall,
-                            color = Primary,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -154,7 +151,7 @@ fun LearningScreen(
                         Text(
                             text = "Her bir resme dokunarak sesini duyabilirsin",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = TextSecondary,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                             textAlign = TextAlign.Center
                         )
                     }
@@ -195,14 +192,14 @@ fun LearningScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp),
-                        colors = CardDefaults.cardColors(containerColor = Secondary.copy(alpha = 0.2f)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)),
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
                             text = "Aferin $childName! Çok iyi dinliyorsun! 👏",
                             modifier = Modifier.padding(16.dp),
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Secondary,
+                            color = MaterialTheme.colorScheme.secondary,
                             fontWeight = FontWeight.Bold,
                             textAlign = TextAlign.Center
                         )
@@ -219,14 +216,14 @@ fun LearningScreen(
                 if (currentPage > 0) {
                     Button(
                         onClick = { currentPage-- },
-                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                         modifier = Modifier
                             .weight(1f)
                             .height(56.dp),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Önceki"
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -252,7 +249,7 @@ fun LearningScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (currentPage == totalPages - 1) Secondary else Primary
+                        containerColor = if (currentPage == totalPages - 1) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
                     ),
                     modifier = Modifier
                         .weight(1f)
@@ -267,7 +264,7 @@ fun LearningScreen(
                     if (currentPage < totalPages - 1) {
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
-                            imageVector = Icons.Default.ArrowForward,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                             contentDescription = "Sonraki"
                         )
                     }
@@ -294,7 +291,7 @@ fun LearningItemCard(
             .aspectRatio(1f)
             .bounceEffect(isPressed),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(
             defaultElevation = if (isPressed) 8.dp else 4.dp
         )
@@ -326,7 +323,7 @@ fun LearningItemCard(
             Text(
                 text = item.nameTr,
                 style = MaterialTheme.typography.titleLarge,
-                color = TextPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center
             )

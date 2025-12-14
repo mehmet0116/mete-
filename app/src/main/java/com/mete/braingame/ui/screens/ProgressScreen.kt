@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material3.*
@@ -46,12 +46,12 @@ fun ProgressScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // Header
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            color = Surface,
+            color = MaterialTheme.colorScheme.surface,
             shadowElevation = 4.dp
         ) {
             Column {
@@ -64,23 +64,23 @@ fun ProgressScreen(
                 ) {
                     IconButton(onClick = onBack) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Geri",
-                            tint = Primary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                     
                     Text(
                         text = "İlerleme Raporum",
                         style = MaterialTheme.typography.headlineSmall,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     
                     Icon(
-                        imageVector = Icons.Default.EmojiEvents,
+                        imageVector = Icons.Filled.EmojiEvents,
                         contentDescription = null,
-                        tint = Secondary,
+                        tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(32.dp)
                     )
                 }
@@ -88,8 +88,8 @@ fun ProgressScreen(
                 // Tab Row
                 TabRow(
                     selectedTabIndex = selectedTab,
-                    containerColor = Surface,
-                    contentColor = Primary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     tabs.forEachIndexed { index, title ->
                         Tab(
@@ -132,7 +132,7 @@ fun StatisticsTab(userProgress: UserProgress) {
                     .springEnterAnimation(0),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surface
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -142,7 +142,7 @@ fun StatisticsTab(userProgress: UserProgress) {
                     Text(
                         text = "Genel İstatistikler",
                         style = MaterialTheme.typography.titleLarge,
-                        color = Primary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.height(16.dp))
@@ -170,7 +170,7 @@ fun StatisticsTab(userProgress: UserProgress) {
                     .springEnterAnimation(100),
                 shape = RoundedCornerShape(20.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Secondary.copy(alpha = 0.1f)
+                    containerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.1f)
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -187,13 +187,13 @@ fun StatisticsTab(userProgress: UserProgress) {
                     Text(
                         text = "${userProgress.currentStreak} Gün",
                         style = MaterialTheme.typography.displaySmall,
-                        color = Secondary,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "En Uzun: ${userProgress.longestStreak} Gün",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = TextSecondary
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
                 }
             }
@@ -250,13 +250,13 @@ fun StatRow(label: String, value: String, emoji: String) {
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextPrimary
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
         Text(
             text = value,
             style = MaterialTheme.typography.titleMedium,
-            color = Secondary,
+            color = MaterialTheme.colorScheme.secondary,
             fontWeight = FontWeight.Bold
         )
     }
@@ -302,7 +302,7 @@ fun AchievementCard(achievement: Achievement) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = achievement.icon,
+                text = achievement.emoji,
                 fontSize = 48.sp,
                 modifier = Modifier.padding(8.dp)
             )
@@ -311,14 +311,14 @@ fun AchievementCard(achievement: Achievement) {
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                color = if (achievement.isUnlocked) TextPrimary else TextSecondary
+                color = if (achievement.isUnlocked) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = achievement.description,
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = TextAlign.Center,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
             
             if (achievement.isUnlocked) {
@@ -367,7 +367,7 @@ fun CategoryProgressCard(categoryName: String, progress: CategoryProgress) {
             .fillMaxWidth()
             .springEnterAnimation(0),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -382,12 +382,12 @@ fun CategoryProgressCard(categoryName: String, progress: CategoryProgress) {
                     text = categoryName,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = "${progress.correctAnswers}/${progress.completedQuestions}",
                     style = MaterialTheme.typography.titleSmall,
-                    color = Secondary,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -405,8 +405,8 @@ fun CategoryProgressCard(categoryName: String, progress: CategoryProgress) {
                     .fillMaxWidth()
                     .height(8.dp)
                     .clip(RoundedCornerShape(4.dp)),
-                color = Secondary,
-                trackColor = Secondary.copy(alpha = 0.2f)
+                color = MaterialTheme.colorScheme.secondary,
+                trackColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
             )
             
             Spacer(modifier = Modifier.height(8.dp))
@@ -414,7 +414,7 @@ fun CategoryProgressCard(categoryName: String, progress: CategoryProgress) {
             Text(
                 text = "📚 ${progress.masteredWords.size} kelime öğrenildi",
                 style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
             )
         }
     }

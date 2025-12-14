@@ -7,8 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mete.braingame.data.GameData
+import com.mete.braingame.data.Screen
 import com.mete.braingame.ui.GameViewModel
 import com.mete.braingame.ui.screens.CategorySelectionScreen
 import com.mete.braingame.ui.screens.GameScreen
@@ -35,36 +39,49 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun BrainGameApp() {
     val viewModel: GameViewModel = viewModel()
-    
-    when (viewModel.currentScreen) {
-        Screen.WELCOME -> WelcomeScreen(
-            onContinue = { viewModel.navigateToCategorySelection() }
-        )
-        Screen.CATEGORY_SELECTION -> CategorySelectionScreen(
-            categories = viewModel.categories,
-            onCategorySelected = { category ->
-                viewModel.selectCategory(category)
-                viewModel.navigateToGame()
-            }
-        )
-        Screen.GAME -> GameScreen(
-            viewModel = viewModel,
-            onGameComplete = { score ->
-                viewModel.setGameScore(score)
-                viewModel.navigateToResults()
-            }
-        )
-        Screen.RESULTS -> ResultsScreen(
-            score = viewModel.gameScore,
-            onPlayAgain = { viewModel.navigateToCategorySelection() },
-            onExit = { viewModel.navigateToWelcome() }
-        )
-    }
-}
 
-enum class Screen {
-    WELCOME,
-    CATEGORY_SELECTION,
-    GAME,
-    RESULTS
+    val currentScreen by viewModel.currentScreen.collectAsState()
+    val gameState by viewModel.gameState.collectAsState()
+
+    when (currentScreen) {
+        is Screen.Welcome -> {
+            WelcomeScreen(
+                onStartClick = {
+                    viewModel.navigateTo(Screen.CategorySelection)
+                }
+            )
+        }
+        is Screen.CategorySelection -> {
+            CategorySelectionScreen(
+                categories = GameData.categories,
+                onCategorySelected = { categoryId ->
+                    viewModel.selectCategory(categoryId)
+                },
+                onBackPressed = {
+                    viewModel.navigateTo(Screen.Welcome)
+                }
+            )
+        }
+        is Screen.Game -> {
+            GameScreen(
+                viewModel = viewModel,
+                onGameComplete = {
+                    viewModel.navigateTo(Screen.Results)
+                }
+            )
+        }
+        is Screen.Results -> {
+            ResultsScreen(
+                score = gameState.score,
+                onPlayAgain = {
+                    viewModel.resetGame()
+                    viewModel.navigateTo(Screen.CategorySelection)
+                },
+                onExit = {
+                    viewModel.resetGame()
+                    viewModel.navigateTo(Screen.Welcome)
+                }
+            )
+        }
+    }
 }

@@ -30,13 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.mete.braingame.R
 import kotlinx.coroutines.delay
 
 @Composable
 fun WelcomeScreen(
-    navController: NavController,
+    onStartClick: () -> Unit = {},
     onVoiceWelcome: () -> Unit = {}
 ) {
     // Uygulama açıldığında sesli hoşgeldin mesajı
@@ -137,9 +136,7 @@ fun WelcomeScreen(
 
             // Başla butonu
             Button(
-                onClick = {
-                    navController.navigate("category")
-                },
+                onClick = onStartClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(60.dp),
